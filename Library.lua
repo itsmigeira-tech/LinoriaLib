@@ -147,7 +147,7 @@ function Library:Create(Class, Properties)
             or _Instance:IsA('ScrollingFrame')
         );
 
-    if Library.UseUICorners and IsCornerTarget and not _Instance:FindFirstChildOfClass('UICorner') then
+    if Library.UseUICorners and IsCornerTarget and _Instance.Name ~= 'ModernShadow' and not _Instance:FindFirstChildOfClass('UICorner') then
         local Height = _Instance.Size.Y;
         local IsThinDecoration = Height.Scale == 0 and Height.Offset > 0 and Height.Offset < 6;
         local HasVisibleSurface = true;
@@ -164,7 +164,9 @@ function Library:Create(Class, Properties)
                 Parent = _Instance;
             });
 
-            if not _Instance:FindFirstChildOfClass('UIStroke') then
+            local ShouldStroke = not _Instance:IsA('ImageLabel') and not _Instance:IsA('ImageButton');
+
+            if ShouldStroke and not _Instance:FindFirstChildOfClass('UIStroke') then
                 local Stroke = Library:Create('UIStroke', {
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
                     Color = Library.OutlineColor;
@@ -2993,6 +2995,7 @@ function Library:CreateWindow(...)
     Library:MakeDraggable(Outer, 38);
 
     local Shadow = Library:Create('ImageLabel', {
+        Name = 'ModernShadow';
         AnchorPoint = Vector2.new(0.5, 0.5);
         BackgroundTransparency = 1;
         Image = 'rbxassetid://6015897843';
