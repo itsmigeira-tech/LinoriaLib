@@ -223,7 +223,7 @@ function Library:AddToolTip(InfoStr, HoverInstance)
 
     Library:AddToRegistry(Tooltip, {
         BackgroundColor3 = 'MainColor';
-        BorderColor3 = 'OutlineColor';
+        BorderColor3 = 'Black';
     });
 
     Library:AddToRegistry(Label, {
@@ -458,7 +458,7 @@ do
         local DisplayFrame = Library:Create('Frame', {
             BackgroundColor3 = ColorPicker.Value;
             BorderColor3 = Library:GetDarkerColor(ColorPicker.Value);
-            BorderMode = Enum.BorderMode.Inset;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(0, 22, 0, 10);
             ZIndex = 6;
             Parent = ToggleLabel;
@@ -496,8 +496,8 @@ do
 
         local PickerFrameInner = Library:Create('Frame', {
             BackgroundColor3 = Library.BackgroundColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 16;
             Parent = PickerFrameOuter;
@@ -521,8 +521,8 @@ do
 
         local SatVibMapInner = Library:Create('Frame', {
             BackgroundColor3 = Library.BackgroundColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 18;
             Parent = SatVibMapOuter;
@@ -590,8 +590,8 @@ do
 
         local HueBoxInner = Library:Create('Frame', {
             BackgroundColor3 = Library.ElementColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 18,
             Parent = HueBoxOuter;
@@ -649,14 +649,14 @@ do
 
             TransparencyBoxInner = Library:Create('Frame', {
                 BackgroundColor3 = ColorPicker.Value;
-                BorderColor3 = Library.OutlineColor;
-                BorderMode = Enum.BorderMode.Inset;
+                BorderColor3 = Library.Black;
+                BorderMode = Enum.BorderMode.Outline;
                 Size = UDim2.new(1, 0, 1, 0);
                 ZIndex = 19;
                 Parent = TransparencyBoxOuter;
             });
 
-            Library:AddToRegistry(TransparencyBoxInner, { BorderColor3 = 'OutlineColor' });
+            Library:AddToRegistry(TransparencyBoxInner, { BorderColor3 = 'Black' });
 
             Library:Create('ImageLabel', {
                 BackgroundTransparency = 1;
@@ -701,8 +701,8 @@ do
 
             ContextMenu.Inner = Library:Create('Frame', {
                 BackgroundColor3 = Library.SectionColor;
-                BorderColor3 = Library.OutlineColor;
-                BorderMode = Enum.BorderMode.Inset;
+                BorderColor3 = Library.Black;
+                BorderMode = Enum.BorderMode.Outline;
                 Size = UDim2.fromScale(1, 1);
                 ZIndex = 15;
                 Parent = ContextMenu.Container;
@@ -750,7 +750,7 @@ do
 
             Library:AddToRegistry(ContextMenu.Inner, {
                 BackgroundColor3 = 'SectionColor';
-                BorderColor3 = 'OutlineColor';
+                BorderColor3 = 'Black';
             });
 
             function ContextMenu:Show()
@@ -815,12 +815,12 @@ do
 
         end
 
-        Library:AddToRegistry(PickerFrameInner, { BackgroundColor3 = 'BackgroundColor'; BorderColor3 = 'OutlineColor'; });
+        Library:AddToRegistry(PickerFrameInner, { BackgroundColor3 = 'BackgroundColor'; BorderColor3 = 'Black'; });
         Library:AddToRegistry(Highlight, { BackgroundColor3 = 'AccentColor'; });
-        Library:AddToRegistry(SatVibMapInner, { BackgroundColor3 = 'BackgroundColor'; BorderColor3 = 'OutlineColor'; });
+        Library:AddToRegistry(SatVibMapInner, { BackgroundColor3 = 'BackgroundColor'; BorderColor3 = 'Black'; });
 
-        Library:AddToRegistry(HueBoxInner, { BackgroundColor3 = 'MainColor'; BorderColor3 = 'OutlineColor'; });
-        Library:AddToRegistry(RgbBoxBase.Frame, { BackgroundColor3 = 'MainColor'; BorderColor3 = 'OutlineColor'; });
+        Library:AddToRegistry(HueBoxInner, { BackgroundColor3 = 'MainColor'; BorderColor3 = 'Black'; });
+        Library:AddToRegistry(RgbBoxBase.Frame, { BackgroundColor3 = 'MainColor'; BorderColor3 = 'Black'; });
         Library:AddToRegistry(RgbBox, { TextColor3 = 'FontColor', });
         Library:AddToRegistry(HueBox, { TextColor3 = 'FontColor', });
 
@@ -1055,8 +1055,8 @@ do
 
         local PickInner = Library:Create('Frame', {
             BackgroundColor3 = Library.BackgroundColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 7;
             Parent = PickOuter;
@@ -1064,7 +1064,7 @@ do
 
         Library:AddToRegistry(PickInner, {
             BackgroundColor3 = 'BackgroundColor';
-            BorderColor3 = 'OutlineColor';
+            BorderColor3 = 'Black';
         });
 
         local DisplayLabel = Library:CreateLabel({
@@ -1091,8 +1091,8 @@ do
 
         local ModeSelectInner = Library:Create('Frame', {
             BackgroundColor3 = Library.BackgroundColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 15;
             Parent = ModeSelectOuter;
@@ -1100,7 +1100,7 @@ do
 
         Library:AddToRegistry(ModeSelectInner, {
             BackgroundColor3 = 'BackgroundColor';
-            BorderColor3 = 'OutlineColor';
+            BorderColor3 = 'Black';
         });
 
         Library:Create('UIListLayout', {
@@ -1458,8 +1458,8 @@ do
 
             local Inner = Library:Create('Frame', {
                 BackgroundColor3 = Library.ElementColor;
-                BorderColor3 = Library.OutlineColor;
-                BorderMode = Enum.BorderMode.Inset;
+                BorderColor3 = Library.Black;
+                BorderMode = Enum.BorderMode.Outline;
                 Size = UDim2.new(1, 0, 1, 0);
                 ZIndex = 6;
                 Parent = Outer;
@@ -1479,7 +1479,7 @@ do
 
             Library:AddToRegistry(Inner, {
                 BackgroundColor3 = 'ElementColor';
-                BorderColor3 = 'OutlineColor';
+                BorderColor3 = 'Black';
             });
 
             Library:OnHighlight(Outer, Outer,
@@ -1622,8 +1622,8 @@ do
 
         local DividerInner = Library:Create('Frame', {
             BackgroundColor3 = Library.ElementColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 6;
             Parent = DividerOuter;
@@ -1635,7 +1635,7 @@ do
 
         Library:AddToRegistry(DividerInner, {
             BackgroundColor3 = 'ElementColor';
-            BorderColor3 = 'OutlineColor';
+            BorderColor3 = 'Black';
         });
 
         Groupbox:AddBlank(9);
@@ -1677,8 +1677,8 @@ do
 
         local TextBoxInner = Library:Create('Frame', {
             BackgroundColor3 = Library.ElementColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 6;
             Parent = TextBoxOuter;
@@ -1686,7 +1686,7 @@ do
 
         Library:AddToRegistry(TextBoxInner, {
             BackgroundColor3 = 'ElementColor';
-            BorderColor3 = 'OutlineColor';
+            BorderColor3 = 'Black';
         });
 
         Library:OnHighlight(TextBoxOuter, TextBoxOuter,
@@ -1847,8 +1847,8 @@ do
 
         local ToggleInner = Library:Create('Frame', {
             BackgroundColor3 = Library.ElementColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 6;
             Parent = ToggleOuter;
@@ -1856,7 +1856,7 @@ do
 
         Library:AddToRegistry(ToggleInner, {
             BackgroundColor3 = 'ElementColor';
-            BorderColor3 = 'OutlineColor';
+            BorderColor3 = 'Black';
         });
 
         local ToggleLabel = Library:CreateLabel({
@@ -1899,10 +1899,10 @@ do
 
         function Toggle:Display()
             ToggleInner.BackgroundColor3 = Toggle.Value and Library.AccentColor or Library.ElementColor;
-            ToggleInner.BorderColor3 = Toggle.Value and Library.AccentColorDark or Library.OutlineColor;
+            ToggleInner.BorderColor3 = Toggle.Value and Library.AccentColorDark or Library.Black;
 
             Library.RegistryMap[ToggleInner].Properties.BackgroundColor3 = Toggle.Value and 'AccentColor' or 'ElementColor';
-            Library.RegistryMap[ToggleInner].Properties.BorderColor3 = Toggle.Value and 'AccentColorDark' or 'OutlineColor';
+            Library.RegistryMap[ToggleInner].Properties.BorderColor3 = Toggle.Value and 'AccentColorDark' or 'Black';
         end;
 
         function Toggle:OnChanged(Func)
@@ -2013,8 +2013,8 @@ do
 
         local SliderInner = Library:Create('Frame', {
             BackgroundColor3 = Library.ElementColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 6;
             Parent = SliderOuter;
@@ -2022,7 +2022,7 @@ do
 
         Library:AddToRegistry(SliderInner, {
             BackgroundColor3 = 'ElementColor';
-            BorderColor3 = 'OutlineColor';
+            BorderColor3 = 'Black';
         });
 
         local Fill = Library:Create('Frame', {
@@ -2225,8 +2225,8 @@ do
 
         local DropdownInner = Library:Create('Frame', {
             BackgroundColor3 = Library.ElementColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 6;
             Parent = DropdownOuter;
@@ -2234,7 +2234,7 @@ do
 
         Library:AddToRegistry(DropdownInner, {
             BackgroundColor3 = 'ElementColor';
-            BorderColor3 = 'OutlineColor';
+            BorderColor3 = 'Black';
         });
 
         -- Flat CS-style dropdown surface.
@@ -2305,8 +2305,8 @@ do
 
         local ListInner = Library:Create('Frame', {
             BackgroundColor3 = Library.ElementColor;
-            BorderColor3 = Library.OutlineColor;
-            BorderMode = Enum.BorderMode.Inset;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
             BorderSizePixel = 0;
             Size = UDim2.new(1, 0, 1, 0);
             ZIndex = 21;
@@ -2315,7 +2315,7 @@ do
 
         Library:AddToRegistry(ListInner, {
             BackgroundColor3 = 'ElementColor';
-            BorderColor3 = 'OutlineColor';
+            BorderColor3 = 'Black';
         });
 
         local Scrolling = Library:Create('ScrollingFrame', {
@@ -2408,7 +2408,7 @@ do
 
                 Library:AddToRegistry(Button, {
                     BackgroundColor3 = 'MainColor';
-                    BorderColor3 = 'OutlineColor';
+                    BorderColor3 = 'Black';
                 });
 
                 local ButtonLabel = Library:CreateLabel({
@@ -2424,7 +2424,7 @@ do
 
                 Library:OnHighlight(Button, Button,
                     { BorderColor3 = 'AccentColor', ZIndex = 24 },
-                    { BorderColor3 = 'OutlineColor', ZIndex = 23 }
+                    { BorderColor3 = 'Black', ZIndex = 23 }
                 );
 
                 local Selected;
@@ -2726,7 +2726,7 @@ do
     local WatermarkInner = Library:Create('Frame', {
         BackgroundColor3 = Library.MainColor;
         BorderColor3 = Library.AccentColor;
-        BorderMode = Enum.BorderMode.Inset;
+        BorderMode = Enum.BorderMode.Outline;
         Size = UDim2.new(1, 0, 1, 0);
         ZIndex = 201;
         Parent = WatermarkOuter;
@@ -2790,8 +2790,8 @@ do
 
     local KeybindInner = Library:Create('Frame', {
         BackgroundColor3 = Library.MainColor;
-        BorderColor3 = Library.OutlineColor;
-        BorderMode = Enum.BorderMode.Inset;
+        BorderColor3 = Library.Black;
+        BorderMode = Enum.BorderMode.Outline;
         Size = UDim2.new(1, 0, 1, 0);
         ZIndex = 101;
         Parent = KeybindOuter;
@@ -2799,7 +2799,7 @@ do
 
     Library:AddToRegistry(KeybindInner, {
         BackgroundColor3 = 'MainColor';
-        BorderColor3 = 'OutlineColor';
+        BorderColor3 = 'Black';
     }, true);
 
     local ColorFrame = Library:Create('Frame', {
@@ -2876,8 +2876,8 @@ function Library:Notify(Text, Time)
 
     local NotifyInner = Library:Create('Frame', {
         BackgroundColor3 = Library.MainColor;
-        BorderColor3 = Library.OutlineColor;
-        BorderMode = Enum.BorderMode.Inset;
+        BorderColor3 = Library.Black;
+        BorderMode = Enum.BorderMode.Outline;
         Size = UDim2.new(1, 0, 1, 0);
         ZIndex = 101;
         Parent = NotifyOuter;
@@ -2885,7 +2885,7 @@ function Library:Notify(Text, Time)
 
     Library:AddToRegistry(NotifyInner, {
         BackgroundColor3 = 'MainColor';
-        BorderColor3 = 'OutlineColor';
+        BorderColor3 = 'Black';
     }, true);
 
     local InnerFrame = Library:Create('Frame', {
@@ -3393,7 +3393,7 @@ function Library:CreateWindow(...)
 
                 local Button = Library:Create('Frame', {
                     BackgroundColor3 = Library.ElementColor;
-                    BorderColor3 = Library.OutlineColor;
+                    BorderColor3 = Library.Black;
                     Size = UDim2.new(0.5, 0, 1, 0);
                     ZIndex = 6;
                     Parent = TabboxButtons;
