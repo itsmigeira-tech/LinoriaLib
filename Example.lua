@@ -401,10 +401,10 @@ local WatermarkConnection = game:GetService('RunService').RenderStepped:Connect(
         FrameCounter = 0;
     end;
 
-    Library:SetWatermark(('LinoriaLib demo | %d fps | %d ms'):format(
-        math.floor(FPS),
-        math.floor(game:GetService('Stats').Network.ServerStatsItem['Data Ping']:GetValue())
-    ));
+    local Ping = math.floor(game:GetService('Stats').Network.ServerStatsItem['Data Ping']:GetValue())
+    Library:SetWatermark(
+        'LinoriaLib demo | ' .. tostring(math.floor(FPS)) .. ' fps | ' .. tostring(Ping) .. ' ms'
+    );
 end);
 
 Library.KeybindFrame.Visible = true; -- todo: add a function for this
