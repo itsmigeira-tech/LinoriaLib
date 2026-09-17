@@ -12,11 +12,12 @@ local Toggles = Library.Toggles
 local Options = Library.Options
 
 local Window = Library:CreateWindow({
-    Title = 'LINORIA // CS STYLE',
+    Title = 'LINORIA // INTERNAL',
     Center = true,
     AutoShow = true,
-    TabPadding = 2,
-    MenuFadeTime = 0.15
+    Size = UDim2.fromOffset(560, 420),
+    TabPadding = 1,
+    MenuFadeTime = 0.12
 })
 
 local Tabs = {
@@ -63,17 +64,20 @@ AimAssist:AddSlider('Smoothness', {
     Min = 0,
     Max = 100,
     Rounding = 0,
-    Suffix = '%'
+    Suffix = '%',
+    HideMax = true
 })
 
 AimAssist:AddToggle('Prediction', {
     Text = 'Prediction',
-    Default = false
+    Default = false,
+    BlankSize = 3
 })
 
 AimAssist:AddToggle('VisibleCheck', {
     Text = 'Visible check',
-    Default = true
+    Default = true,
+    BlankSize = 3
 })
 
 local Fov = Tabs.Combat:AddRightGroupbox('FOV Circle')
@@ -99,7 +103,8 @@ Fov:AddSlider('FovRadius', {
     Min = 10,
     Max = 360,
     Rounding = 0,
-    Suffix = '°'
+    Suffix = '°',
+    HideMax = true
 })
 
 Fov:AddSlider('FovThickness', {
@@ -108,7 +113,8 @@ Fov:AddSlider('FovThickness', {
     Min = 1,
     Max = 5,
     Rounding = 0,
-    Suffix = 'px'
+    Suffix = 'px',
+    HideMax = true
 })
 
 Fov:AddLabel('Color'):AddColorPicker('FovColor', {
@@ -333,8 +339,9 @@ SaveManager:SetLibrary(Library)
 SaveManager:IgnoreThemeSettings()
 SaveManager:SetIgnoreIndexes({ 'MenuKeybind' })
 
-ThemeManager:SetFolder('LinoriaCS')
-SaveManager:SetFolder('LinoriaCS/configs')
+ThemeManager.DefaultTheme = 'Jester'
+ThemeManager:SetFolder('LinoriaCSRefined')
+SaveManager:SetFolder('LinoriaCSRefined/configs')
 
 SaveManager:BuildConfigSection(Tabs.Settings)
 ThemeManager:ApplyToTab(Tabs.Settings)
