@@ -360,6 +360,21 @@ function Library:RemoveFromRegistry(Instance)
 end;
 
 function Library:UpdateColorsUsingRegistry()
+    -- Derive secondary surfaces from the active base theme so custom themes
+    -- recolor sections and controls instead of leaving them on stale colors.
+    local function Mix(ColorA, ColorB, Alpha)
+        return Color3.new(
+            ColorA.R + (ColorB.R - ColorA.R) * Alpha,
+            ColorA.G + (ColorB.G - ColorA.G) * Alpha,
+            ColorA.B + (ColorB.B - ColorA.B) * Alpha
+        );
+    end;
+
+    Library.SectionColor = Mix(Library.BackgroundColor, Library.MainColor, 0.35);
+    Library.ElementColor = Mix(Library.MainColor, Library.FontColor, 0.035);
+    Library.InactiveColor = Mix(Library.FontColor, Library.BackgroundColor, 0.55);
+    Library.AccentColorDark = Library:GetDarkerColor(Library.AccentColor);
+
     -- TODO: Could have an 'active' list of objects
     -- where the active list only contains Visible objects.
 
@@ -2967,6 +2982,7 @@ function Library:CreateWindow(...)
         BorderSizePixel = 0;
         Position = Config.Position,
         Size = Config.Size,
+        ClipsDescendants = true;
         Visible = false;
         ZIndex = 1;
         Parent = ScreenGui;
@@ -3121,6 +3137,7 @@ function Library:CreateWindow(...)
         local TabFrame = Library:Create('Frame', {
             Name = 'TabFrame',
             BackgroundTransparency = 1;
+            ClipsDescendants = true;
             Position = UDim2.new(0, 0, 0, 0);
             Size = UDim2.new(1, 0, 1, 0);
             Visible = false;
@@ -3131,6 +3148,7 @@ function Library:CreateWindow(...)
         local LeftSide = Library:Create('ScrollingFrame', {
             BackgroundTransparency = 1;
             BorderSizePixel = 0;
+            ClipsDescendants = true;
             Position = UDim2.new(0, 6, 0, 6);
             Size = UDim2.new(0.5, -9, 1, -12);
             CanvasSize = UDim2.new(0, 0, 0, 0);
@@ -3144,6 +3162,7 @@ function Library:CreateWindow(...)
         local RightSide = Library:Create('ScrollingFrame', {
             BackgroundTransparency = 1;
             BorderSizePixel = 0;
+            ClipsDescendants = true;
             Position = UDim2.new(0.5, 3, 0, 6);
             Size = UDim2.new(0.5, -9, 1, -12);
             CanvasSize = UDim2.new(0, 0, 0, 0);
@@ -3222,8 +3241,8 @@ function Library:CreateWindow(...)
 
             local BoxInner = Library:Create('Frame', {
                 BackgroundColor3 = Library.SectionColor;
-                BorderColor3 = Color3.new(0, 0, 0);
-                -- BorderMode = Enum.BorderMode.Inset;
+                BorderColor3 = Library.OutlineColor;
+                BorderMode = Enum.BorderMode.Inset;
                 Size = UDim2.new(1, -2, 1, -2);
                 Position = UDim2.new(0, 1, 0, 1);
                 ZIndex = 4;
@@ -3232,10 +3251,11 @@ function Library:CreateWindow(...)
 
             Library:AddToRegistry(BoxInner, {
                 BackgroundColor3 = 'SectionColor';
+                BorderColor3 = 'OutlineColor';
             });
 
             local Highlight = Library:Create('Frame', {
-                BackgroundColor3 = Library.AccentColor;
+                BackgroundColor3 = Library.OutlineColor;
                 BorderSizePixel = 0;
                 Size = UDim2.new(1, 0, 0, 1);
                 ZIndex = 5;
@@ -3243,7 +3263,7 @@ function Library:CreateWindow(...)
             });
 
             Library:AddToRegistry(Highlight, {
-                BackgroundColor3 = 'AccentColor';
+                BackgroundColor3 = 'OutlineColor';
             });
 
             local GroupboxLabel = Library:CreateLabel({
@@ -3322,8 +3342,8 @@ function Library:CreateWindow(...)
 
             local BoxInner = Library:Create('Frame', {
                 BackgroundColor3 = Library.SectionColor;
-                BorderColor3 = Color3.new(0, 0, 0);
-                -- BorderMode = Enum.BorderMode.Inset;
+                BorderColor3 = Library.OutlineColor;
+                BorderMode = Enum.BorderMode.Inset;
                 Size = UDim2.new(1, -2, 1, -2);
                 Position = UDim2.new(0, 1, 0, 1);
                 ZIndex = 4;
@@ -3332,10 +3352,11 @@ function Library:CreateWindow(...)
 
             Library:AddToRegistry(BoxInner, {
                 BackgroundColor3 = 'SectionColor';
+                BorderColor3 = 'OutlineColor';
             });
 
             local Highlight = Library:Create('Frame', {
-                BackgroundColor3 = Library.AccentColor;
+                BackgroundColor3 = Library.OutlineColor;
                 BorderSizePixel = 0;
                 Size = UDim2.new(1, 0, 0, 1);
                 ZIndex = 10;
@@ -3343,7 +3364,7 @@ function Library:CreateWindow(...)
             });
 
             Library:AddToRegistry(Highlight, {
-                BackgroundColor3 = 'AccentColor';
+                BackgroundColor3 = 'OutlineColor';
             });
 
             local TabboxButtons = Library:Create('Frame', {
@@ -3386,7 +3407,7 @@ function Library:CreateWindow(...)
                 });
 
                 local Block = Library:Create('Frame', {
-                    BackgroundColor3 = Library.BackgroundColor;
+                    BackgroundColor3 = Library.SectionColor;
                     BorderSizePixel = 0;
                     Position = UDim2.new(0, 0, 1, 0);
                     Size = UDim2.new(1, 0, 0, 1);
@@ -3396,7 +3417,7 @@ function Library:CreateWindow(...)
                 });
 
                 Library:AddToRegistry(Block, {
-                    BackgroundColor3 = 'BackgroundColor';
+                    BackgroundColor3 = 'SectionColor';
                 });
 
                 local Container = Library:Create('Frame', {
