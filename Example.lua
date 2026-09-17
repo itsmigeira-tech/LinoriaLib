@@ -2,10 +2,11 @@
 -- You can suggest changes with a pull request or something
 
 local repo = 'https://raw.githubusercontent.com/itsmigeira-tech/LinoriaLib/main/'
+local CacheBuster = '?v=' .. tostring(os.time())
 
-local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
-local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
-local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua'))()
+local Library = loadstring(game:HttpGet(repo .. 'Library.lua' .. CacheBuster))()
+local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua' .. CacheBuster))()
+local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua' .. CacheBuster))()
 
 local Toggles = Library.Toggles
 local Options = Library.Options
@@ -16,11 +17,12 @@ local Window = Library:CreateWindow({
     -- Position and Size are also valid options here
     -- but you do not need to define them unless you are changing them :)
 
-    Title = 'Example menu',
+    Title = 'Modern Linoria',
     Center = true,
     AutoShow = true,
-    TabPadding = 8,
-    MenuFadeTime = 0.2
+    Size = UDim2.fromOffset(600, 540),
+    TabPadding = 6,
+    MenuFadeTime = 0.15
 })
 
 -- CALLBACK NOTE:
