@@ -12,7 +12,7 @@ local Toggles = Library.Toggles
 local Options = Library.Options
 
 local Window = Library:CreateWindow({
-    Title = 'LINORIA // INTERNAL',
+    Title = 'Linoria V2',
     Center = true,
     AutoShow = true,
     Size = UDim2.fromOffset(560, 500),
