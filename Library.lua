@@ -135,17 +135,26 @@ function Library:Create(Class, Properties)
         _Instance[Property] = Value;
     end;
 
-    local IsCornerTarget = _Instance:IsA('Frame')
-        or _Instance:IsA('GuiButton')
-        or _Instance:IsA('TextBox')
-        or _Instance:IsA('ImageLabel')
-        or _Instance:IsA('ScrollingFrame');
+    local IsCornerTarget = _Instance:IsA('GuiObject')
+        and (
+            _Instance:IsA('Frame')
+            or _Instance:IsA('GuiButton')
+            or _Instance:IsA('TextBox')
+            or _Instance:IsA('ImageLabel')
+            or _Instance:IsA('ImageButton')
+            or _Instance:IsA('ScrollingFrame')
+        );
 
     if Library.UseUICorners and IsCornerTarget and not _Instance:FindFirstChildOfClass('UICorner') then
         local Height = _Instance.Size.Y;
         local IsThinDecoration = Height.Scale == 0 and Height.Offset > 0 and Height.Offset < 6;
+        local HasVisibleSurface = true;
 
-        if not IsThinDecoration then
+        if _Instance:IsA('Frame') or _Instance:IsA('ScrollingFrame') then
+            HasVisibleSurface = _Instance.BackgroundTransparency < 1;
+        end;
+
+        if HasVisibleSurface and not IsThinDecoration then
             Library:Create('UICorner', {
                 CornerRadius = Library.CornerRadius;
                 Parent = _Instance;
@@ -3277,7 +3286,7 @@ function Library:CreateWindow(...)
                 local Size = 0;
 
                 for _, Element in next, Groupbox.Container:GetChildren() do
-                    if Element:IsA('GuiObject') and Element.Visible then
+                    if not Element:IsA('UIComponent') and Element:IsA('GuiObject') and Element.Visible then
                         Size = Size + Element.Size.Y.Offset;
                     end;
                 end;
@@ -3459,7 +3468,7 @@ function Library:CreateWindow(...)
                     local Size = 0;
 
                     for _, Element in next, Tab.Container:GetChildren() do
-                        if Element:IsA('GuiObject') and Element.Visible then
+                        if not Element:IsA('UIComponent') and Element:IsA('GuiObject') and Element.Visible then
                             Size = Size + Element.Size.Y.Offset;
                         end;
                     end;
