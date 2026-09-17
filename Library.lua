@@ -2396,7 +2396,9 @@ do
 
                 local Button = Library:Create('Frame', {
                     BackgroundColor3 = Library.ElementColor;
-                    BorderColor3 = Library.OutlineColor;
+                    BorderColor3 = Library.Black;
+                    BorderMode = Enum.BorderMode.Outline;
+                    BorderSizePixel = 1;
                     BorderMode = Enum.BorderMode.Middle;
                     Size = UDim2.new(1, -1, 0, 20);
                     ZIndex = 23;
@@ -2992,8 +2994,9 @@ function Library:CreateWindow(...)
 
     local Inner = Library:Create('Frame', {
         BackgroundColor3 = Library.MainColor;
-        BorderColor3 = Library.OutlineColor;
-        BorderMode = Enum.BorderMode.Inset;
+        BorderColor3 = Library.Black;
+        BorderMode = Enum.BorderMode.Outline;
+        BorderSizePixel = 1;
         Position = UDim2.new(0, 1, 0, 1);
         Size = UDim2.new(1, -2, 1, -2);
         ZIndex = 1;
@@ -3002,7 +3005,7 @@ function Library:CreateWindow(...)
 
     Library:AddToRegistry(Inner, {
         BackgroundColor3 = 'MainColor';
-        BorderColor3 = 'OutlineColor';
+        BorderColor3 = 'Black';
     });
 
     local AccentBar = Library:Create('Frame', {
@@ -3030,7 +3033,9 @@ function Library:CreateWindow(...)
 
     local MainSectionOuter = Library:Create('Frame', {
         BackgroundColor3 = Library.BackgroundColor;
-        BorderColor3 = Library.OutlineColor;
+        BorderColor3 = Library.Black;
+        BorderMode = Enum.BorderMode.Outline;
+        BorderSizePixel = 1;
         Position = UDim2.new(0, 7, 0, 25);
         Size = UDim2.new(1, -14, 1, -32);
         ZIndex = 1;
@@ -3039,13 +3044,12 @@ function Library:CreateWindow(...)
 
     Library:AddToRegistry(MainSectionOuter, {
         BackgroundColor3 = 'BackgroundColor';
-        BorderColor3 = 'OutlineColor';
+        BorderColor3 = 'Black';
     });
 
     local MainSectionInner = Library:Create('Frame', {
         BackgroundColor3 = Library.BackgroundColor;
-        BorderColor3 = Color3.new(0, 0, 0);
-        BorderMode = Enum.BorderMode.Inset;
+        BorderSizePixel = 0;
         Position = UDim2.new(0, 0, 0, 0);
         Size = UDim2.new(1, 0, 1, 0);
         ZIndex = 1;
@@ -3073,7 +3077,9 @@ function Library:CreateWindow(...)
 
     local TabContainer = Library:Create('Frame', {
         BackgroundColor3 = Library.BackgroundColor;
-        BorderColor3 = Library.OutlineColor;
+        BorderColor3 = Library.Black;
+        BorderMode = Enum.BorderMode.Outline;
+        BorderSizePixel = 1;
         Position = UDim2.new(0, 5, 0, 28);
         Size = UDim2.new(1, -10, 1, -33);
         ZIndex = 2;
@@ -3083,7 +3089,7 @@ function Library:CreateWindow(...)
 
     Library:AddToRegistry(TabContainer, {
         BackgroundColor3 = 'BackgroundColor';
-        BorderColor3 = 'OutlineColor';
+        BorderColor3 = 'Black';
     });
 
     function Window:SetWindowTitle(Title)
@@ -3100,7 +3106,9 @@ function Library:CreateWindow(...)
 
         local TabButton = Library:Create('Frame', {
             BackgroundColor3 = Library.BackgroundColor;
-            BorderColor3 = Library.OutlineColor;
+            BorderColor3 = Library.Black;
+            BorderMode = Enum.BorderMode.Outline;
+            BorderSizePixel = 1;
             Size = UDim2.new(0, TabButtonWidth + 14, 1, 0);
             ZIndex = 1;
             Parent = TabArea;
@@ -3108,7 +3116,7 @@ function Library:CreateWindow(...)
 
         Library:AddToRegistry(TabButton, {
             BackgroundColor3 = 'BackgroundColor';
-            BorderColor3 = 'OutlineColor';
+            BorderColor3 = 'Black';
         });
 
         local TabButtonLabel = Library:CreateLabel({
@@ -3227,8 +3235,9 @@ function Library:CreateWindow(...)
 
             local BoxOuter = Library:Create('Frame', {
                 BackgroundColor3 = Library.SectionColor;
-                BorderColor3 = Library.OutlineColor;
-                BorderMode = Enum.BorderMode.Inset;
+                BorderColor3 = Library.Black;
+                BorderMode = Enum.BorderMode.Outline;
+                BorderSizePixel = 1;
                 Size = UDim2.new(1, 0, 0, 507 + 2);
                 ZIndex = 2;
                 Parent = Info.Side == 1 and LeftSide or RightSide;
@@ -3236,13 +3245,12 @@ function Library:CreateWindow(...)
 
             Library:AddToRegistry(BoxOuter, {
                 BackgroundColor3 = 'SectionColor';
-                BorderColor3 = 'OutlineColor';
+                BorderColor3 = 'Black';
             });
 
             local BoxInner = Library:Create('Frame', {
                 BackgroundColor3 = Library.SectionColor;
-                BorderColor3 = Library.OutlineColor;
-                BorderMode = Enum.BorderMode.Inset;
+                BorderSizePixel = 0;
                 Size = UDim2.new(1, -2, 1, -2);
                 Position = UDim2.new(0, 1, 0, 1);
                 ZIndex = 4;
@@ -3251,11 +3259,10 @@ function Library:CreateWindow(...)
 
             Library:AddToRegistry(BoxInner, {
                 BackgroundColor3 = 'SectionColor';
-                BorderColor3 = 'OutlineColor';
             });
 
             local Highlight = Library:Create('Frame', {
-                BackgroundColor3 = Library.OutlineColor;
+                BackgroundColor3 = Library.Black;
                 BorderSizePixel = 0;
                 Size = UDim2.new(1, 0, 0, 1);
                 ZIndex = 5;
@@ -3263,7 +3270,7 @@ function Library:CreateWindow(...)
             });
 
             Library:AddToRegistry(Highlight, {
-                BackgroundColor3 = 'OutlineColor';
+                BackgroundColor3 = 'Black';
             });
 
             local GroupboxLabel = Library:CreateLabel({
@@ -3328,8 +3335,9 @@ function Library:CreateWindow(...)
 
             local BoxOuter = Library:Create('Frame', {
                 BackgroundColor3 = Library.SectionColor;
-                BorderColor3 = Library.OutlineColor;
-                BorderMode = Enum.BorderMode.Inset;
+                BorderColor3 = Library.Black;
+                BorderMode = Enum.BorderMode.Outline;
+                BorderSizePixel = 1;
                 Size = UDim2.new(1, 0, 0, 0);
                 ZIndex = 2;
                 Parent = Info.Side == 1 and LeftSide or RightSide;
@@ -3337,13 +3345,12 @@ function Library:CreateWindow(...)
 
             Library:AddToRegistry(BoxOuter, {
                 BackgroundColor3 = 'SectionColor';
-                BorderColor3 = 'OutlineColor';
+                BorderColor3 = 'Black';
             });
 
             local BoxInner = Library:Create('Frame', {
                 BackgroundColor3 = Library.SectionColor;
-                BorderColor3 = Library.OutlineColor;
-                BorderMode = Enum.BorderMode.Inset;
+                BorderSizePixel = 0;
                 Size = UDim2.new(1, -2, 1, -2);
                 Position = UDim2.new(0, 1, 0, 1);
                 ZIndex = 4;
@@ -3352,11 +3359,10 @@ function Library:CreateWindow(...)
 
             Library:AddToRegistry(BoxInner, {
                 BackgroundColor3 = 'SectionColor';
-                BorderColor3 = 'OutlineColor';
             });
 
             local Highlight = Library:Create('Frame', {
-                BackgroundColor3 = Library.OutlineColor;
+                BackgroundColor3 = Library.Black;
                 BorderSizePixel = 0;
                 Size = UDim2.new(1, 0, 0, 1);
                 ZIndex = 10;
@@ -3364,7 +3370,7 @@ function Library:CreateWindow(...)
             });
 
             Library:AddToRegistry(Highlight, {
-                BackgroundColor3 = 'OutlineColor';
+                BackgroundColor3 = 'Black';
             });
 
             local TabboxButtons = Library:Create('Frame', {
