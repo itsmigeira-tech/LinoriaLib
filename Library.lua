@@ -3169,6 +3169,10 @@ function Library:CreateWindow(...)
         });
 
         for _, Side in next, { LeftSide, RightSide } do
+            Library:AddToRegistry(Side, {
+                ScrollBarImageColor3 = 'OutlineColor';
+            });
+
             Side:WaitForChild('UIListLayout'):GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
                 Side.CanvasSize = UDim2.fromOffset(0, Side.UIListLayout.AbsoluteContentSize.Y);
             end);
@@ -3262,11 +3266,6 @@ function Library:CreateWindow(...)
                 Parent = BoxInner;
             });
 
-            Library:AddToRegistry(TabboxButtons, {
-                BackgroundColor3 = 'MainColor';
-                BorderColor3 = 'OutlineColor';
-            });
-
             Library:Create('UIListLayout', {
                 FillDirection = Enum.FillDirection.Vertical;
                 SortOrder = Enum.SortOrder.LayoutOrder;
@@ -3282,7 +3281,7 @@ function Library:CreateWindow(...)
                     end;
                 end;
 
-                BoxOuter.Size = UDim2.new(1, 0, 0, 42 + Size + 8);
+                BoxOuter.Size = UDim2.new(1, 0, 0, 34 + Size);
             end;
 
             Groupbox.Container = Container;
@@ -3356,6 +3355,11 @@ function Library:CreateWindow(...)
                 Size = UDim2.new(1, -12, 0, 28);
                 ZIndex = 5;
                 Parent = BoxInner;
+            });
+
+            Library:AddToRegistry(TabboxButtons, {
+                BackgroundColor3 = 'MainColor';
+                BorderColor3 = 'OutlineColor';
             });
 
             Library:Create('UIListLayout', {
@@ -3453,9 +3457,12 @@ function Library:CreateWindow(...)
                         TabCount = TabCount + 1;
                     end;
 
+                    local SubtabGap = 4;
+                    local TotalGap = SubtabGap * math.max(TabCount - 1, 0);
+
                     for _, Button in next, TabboxButtons:GetChildren() do
                         if Button:IsA('GuiObject') then
-                            Button.Size = UDim2.new(1 / TabCount, -2, 1, 0);
+                            Button.Size = UDim2.new(1 / TabCount, -(TotalGap / TabCount), 1, 0);
                         end;
                     end;
 
@@ -3529,9 +3536,12 @@ function Library:CreateWindow(...)
             TabCount = TabCount + 1;
         end;
 
+        local TabGap = math.max(Config.TabPadding, 2);
+        local TotalGap = TabGap * math.max(TabCount - 1, 0);
+
         for _, Child in next, TabArea:GetChildren() do
             if Child:IsA('Frame') then
-                Child.Size = UDim2.new(1 / TabCount, -Config.TabPadding, 1, 0);
+                Child.Size = UDim2.new(1 / TabCount, -(TotalGap / TabCount), 1, 0);
             end;
         end;
 
