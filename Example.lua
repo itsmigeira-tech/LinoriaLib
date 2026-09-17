@@ -11,6 +11,8 @@ local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua' .. 
 local Toggles = Library.Toggles
 local Options = Library.Options
 
+Library.OutlineColor = Library.Black
+
 local Window = Library:CreateWindow({
     Title = 'Linoria V2',
     Center = true,
