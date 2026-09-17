@@ -29,6 +29,9 @@ local Library = {
 
     HudRegistry = {};
 
+    Toggles = Toggles;
+    Options = Options;
+
     FontColor = Color3.fromRGB(255, 255, 255);
     MainColor = Color3.fromRGB(28, 28, 28);
     BackgroundColor = Color3.fromRGB(20, 20, 20);
@@ -2214,7 +2217,7 @@ do
         end
 
         for _, Element in next, Container:GetChildren() do
-            if not Element:IsA('UIListLayout') then
+            if Element:IsA('GuiObject') then
                 RelativeOffset = RelativeOffset + Element.Size.Y.Offset;
             end;
         end;
@@ -2386,7 +2389,7 @@ do
             local Buttons = {};
 
             for _, Element in next, Scrolling:GetChildren() do
-                if not Element:IsA('UIListLayout') then
+                if Element:IsA('GuiObject') then
                     Element:Destroy();
                 end;
             end;
@@ -3274,7 +3277,7 @@ function Library:CreateWindow(...)
                 local Size = 0;
 
                 for _, Element in next, Groupbox.Container:GetChildren() do
-                    if (not Element:IsA('UIListLayout')) and Element.Visible then
+                    if Element:IsA('GuiObject') and Element.Visible then
                         Size = Size + Element.Size.Y.Offset;
                     end;
                 end;
@@ -3444,7 +3447,7 @@ function Library:CreateWindow(...)
                     end;
 
                     for _, Button in next, TabboxButtons:GetChildren() do
-                        if not Button:IsA('UIListLayout') then
+                        if Button:IsA('GuiObject') then
                             Button.Size = UDim2.new(1 / TabCount, 0, 1, 0);
                         end;
                     end;
@@ -3456,7 +3459,7 @@ function Library:CreateWindow(...)
                     local Size = 0;
 
                     for _, Element in next, Tab.Container:GetChildren() do
-                        if (not Element:IsA('UIListLayout')) and Element.Visible then
+                        if Element:IsA('GuiObject') and Element.Visible then
                             Size = Size + Element.Size.Y.Offset;
                         end;
                     end;
@@ -3472,6 +3475,7 @@ function Library:CreateWindow(...)
                 end);
 
                 Tab.Container = Container;
+                local IsFirstTab = next(Tabbox.Tabs) == nil;
                 Tabbox.Tabs[Name] = Tab;
 
                 setmetatable(Tab, BaseGroupbox);
@@ -3479,8 +3483,8 @@ function Library:CreateWindow(...)
                 Tab:AddBlank(3);
                 Tab:Resize();
 
-                -- Show first tab (number is 2 cus of the UIListLayout that also sits in that instance)
-                if #TabboxButtons:GetChildren() == 2 then
+                -- Show the first tab without relying on child counts, since UI components also live here.
+                if IsFirstTab then
                     Tab:Show();
                 end;
 
@@ -3507,7 +3511,7 @@ function Library:CreateWindow(...)
         end);
 
         -- This was the first tab added, so we show it by default.
-        if #TabContainer:GetChildren() == 1 then
+        if next(Window.Tabs) == nil then
             Tab:ShowTab();
         end;
 
