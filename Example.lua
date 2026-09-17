@@ -15,7 +15,7 @@ local Window = Library:CreateWindow({
     Title = 'LINORIA // INTERNAL',
     Center = true,
     AutoShow = true,
-    Size = UDim2.fromOffset(560, 420),
+    Size = UDim2.fromOffset(560, 500),
     TabPadding = 1,
     MenuFadeTime = 0.12
 })
@@ -214,15 +214,11 @@ local General = Tabs.Misc:AddLeftGroupbox('General')
 
 General:AddButton({
     Text = 'Primary action',
-    Func = function()
-        print('Primary action clicked')
-    end,
+    Func = function() end,
     Tooltip = 'Button example'
 }):AddButton({
     Text = 'Secondary',
-    Func = function()
-        print('Secondary action clicked')
-    end
+    Func = function() end
 })
 
 General:AddInput('ProfileName', {
@@ -312,7 +308,6 @@ Library.KeybindFrame.Visible = true
 Library:OnUnload(function()
     WatermarkConnection:Disconnect()
     Library.Unloaded = true
-    print('Linoria unloaded')
 end)
 
 -- Settings
