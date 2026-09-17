@@ -16,11 +16,11 @@ local Window = Library:CreateWindow({
     -- Position and Size are also valid options here
     -- but you do not need to define them unless you are changing them :)
 
-    Title = 'Example menu',
+    Title = 'Modern Linoria',
     Center = true,
     AutoShow = true,
-    TabPadding = 8,
-    MenuFadeTime = 0.2
+    TabPadding = 6,
+    MenuFadeTime = 0.15
 })
 
 -- CALLBACK NOTE:
