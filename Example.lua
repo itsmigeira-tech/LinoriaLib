@@ -11,6 +11,7 @@ local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua' .. 
 local Toggles = Library.Toggles
 local Options = Library.Options
 
+Library.Black = Color3.fromRGB(0, 0, 0)
 Library.OutlineColor = Library.Black
 
 local Window = Library:CreateWindow({
@@ -18,7 +19,7 @@ local Window = Library:CreateWindow({
     Center = true,
     AutoShow = true,
     Size = UDim2.fromOffset(560, 500),
-    TabPadding = 1,
+    TabPadding = 2,
     MenuFadeTime = 0.12
 })
 
