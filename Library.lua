@@ -2458,18 +2458,6 @@ do
                     Parent = Button;
                 });
 
-                Button.MouseEnter:Connect(function()
-                    Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.09);
-                    Button.BorderColor3 = Library.AccentColor;
-                    Button.ZIndex = 24;
-                end);
-
-                Button.MouseLeave:Connect(function()
-                    Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.035);
-                    Button.BorderColor3 = Library.OutlineColor;
-                    Button.ZIndex = 23;
-                end);
-
                 local Selected;
 
                 if Info.Multi then
@@ -2477,6 +2465,20 @@ do
                 else
                     Selected = Dropdown.Value == Value;
                 end;
+
+                Button.MouseEnter:Connect(function()
+                    Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.09);
+                    Button.BorderColor3 = Library.AccentColor;
+                    Button.ZIndex = 24;
+                end);
+
+                Button.MouseLeave:Connect(function()
+                    Button.BackgroundColor3 = Selected
+                        and Library:GetLighterColor(Library.AccentColorDark, 0.05)
+                        or Library:GetLighterColor(Library.MainColor, 0.035);
+                    Button.BorderColor3 = Library.OutlineColor;
+                    Button.ZIndex = 23;
+                end);
 
                 function Table:UpdateButton()
                     if Info.Multi then
