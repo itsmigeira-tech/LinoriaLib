@@ -144,6 +144,18 @@ function Library:Create(Class, Properties)
     return _Instance;
 end;
 
+function Library:SetVisualEffects(Config)
+    Config = Config or {};
+
+    if Config.UseGradients ~= nil then Library.UseGradients = Config.UseGradients; end;
+    if Config.GradientStrength ~= nil then Library.GradientStrength = Config.GradientStrength; end;
+    if Config.UseGlow ~= nil then Library.UseGlow = Config.UseGlow; end;
+    if Config.GlowTransparency ~= nil then Library.GlowTransparency = Config.GlowTransparency; end;
+    if Config.GlowHoverTransparency ~= nil then Library.GlowHoverTransparency = Config.GlowHoverTransparency; end;
+    if Config.GlowActiveTransparency ~= nil then Library.GlowActiveTransparency = Config.GlowActiveTransparency; end;
+    if Config.GlowThickness ~= nil then Library.GlowThickness = Config.GlowThickness; end;
+end;
+
 function Library:AddGradient(Parent, Strength, Rotation)
     if not Library.UseGradients or not Parent then
         return nil;
