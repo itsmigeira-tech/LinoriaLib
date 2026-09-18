@@ -1541,6 +1541,7 @@
 						library:load_config(library.old_config)
 					end})
 					section:button({name = "Unload Menu", callback = function()
+						window._config_watcher_started = false
 						library:load_config(library.old_config)
 
 						for _, gui in library.guis do
