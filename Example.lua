@@ -13,12 +13,15 @@ local Toggles = Library.Toggles
 local Options = Library.Options
 
 -- Visual layer: original Linoria layout, enhanced gradients and subtle glow.
-Library.UseGradients = true
-Library.GradientStrength = 16
-Library.UseGlow = true
-Library.GlowTransparency = 0.82
-Library.GlowHoverTransparency = 0.38
-Library.GlowActiveTransparency = 0.48
+Library:SetVisualEffects({
+    UseGradients = true,
+    GradientStrength = 16,
+    UseGlow = true,
+    GlowTransparency = 0.82,
+    GlowHoverTransparency = 0.38,
+    GlowActiveTransparency = 0.48,
+    GlowThickness = 1.35
+})
 
 local Window = Library:CreateWindow({
     -- Set Center to true if you want the menu to appear in the center
