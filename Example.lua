@@ -20,8 +20,8 @@ local Window = Library:CreateWindow({
     Title = 'Modern Linoria',
     Center = true,
     AutoShow = true,
-    Size = UDim2.fromOffset(620, 560),
-    TabPadding = 4,
+    Size = UDim2.fromOffset(580, 500),
+    TabPadding = 3,
     MenuFadeTime = 0.15
 })
 
