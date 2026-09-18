@@ -42,6 +42,15 @@ local Library = {
     Black = Color3.new(0, 0, 0);
     Font = Enum.Font.Code,
 
+    UseGradients = true;
+    GradientStrength = 16;
+
+    UseGlow = true;
+    GlowTransparency = 0.82;
+    GlowHoverTransparency = 0.38;
+    GlowActiveTransparency = 0.48;
+    GlowThickness = 1.35;
+
     OpenedFrames = {};
     DependencyBoxes = {};
 
@@ -133,6 +142,64 @@ function Library:Create(Class, Properties)
     end;
 
     return _Instance;
+end;
+
+function Library:AddGradient(Parent, Strength, Rotation)
+    if not Library.UseGradients or not Parent then
+        return nil;
+    end;
+
+    local Amount = math.clamp(Strength or Library.GradientStrength or 16, 0, 48);
+    local Bottom = 255 - Amount;
+
+    return Library:Create('UIGradient', {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+            ColorSequenceKeypoint.new(0.45, Color3.fromRGB(248, 248, 248)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(Bottom, Bottom, Bottom))
+        });
+        Rotation = Rotation or 90;
+        Parent = Parent;
+    });
+end;
+
+function Library:AddGlow(Parent, Transparency)
+    if not Library.UseGlow or not Parent then
+        return nil;
+    end;
+
+    local Glow = Library:Create('UIStroke', {
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
+        Color = Library.AccentColor;
+        Thickness = Library.GlowThickness or 1.35;
+        Transparency = Transparency or Library.GlowTransparency or 0.82;
+        LineJoinMode = Enum.LineJoinMode.Miter;
+        Parent = Parent;
+    });
+
+    Library:AddToRegistry(Glow, {
+        Color = 'AccentColor';
+    });
+
+    return Glow;
+end;
+
+function Library:BindGlow(HoverInstance, Glow, ActivePredicate)
+    if not Glow or not HoverInstance then
+        return;
+    end;
+
+    HoverInstance.MouseEnter:Connect(function()
+        Glow.Transparency = Library.GlowHoverTransparency or 0.38;
+    end);
+
+    HoverInstance.MouseLeave:Connect(function()
+        if ActivePredicate and ActivePredicate() then
+            Glow.Transparency = Library.GlowActiveTransparency or 0.48;
+        else
+            Glow.Transparency = Library.GlowTransparency or 0.82;
+        end;
+    end);
 end;
 
 function Library:ApplyTextStroke(Inst)
@@ -1454,14 +1521,7 @@ do
                 Parent = Inner;
             });
 
-            Library:Create('UIGradient', {
-                Color = ColorSequence.new({
-                    ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
-                    ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 212, 212))
-                });
-                Rotation = 90;
-                Parent = Inner;
-            });
+            Library:AddGradient(Inner, 14, 90);
 
             Library:AddToRegistry(Outer, {
                 BorderColor3 = 'Black';
@@ -1471,6 +1531,9 @@ do
                 BackgroundColor3 = 'MainColor';
                 BorderColor3 = 'OutlineColor';
             });
+
+            local Glow = Library:AddGlow(Outer);
+            Library:BindGlow(Outer, Glow);
 
             Library:OnHighlight(Outer, Outer,
                 { BorderColor3 = 'AccentColor' },
@@ -1679,6 +1742,9 @@ do
             BorderColor3 = 'OutlineColor';
         });
 
+        local TextBoxGlow = Library:AddGlow(TextBoxOuter);
+        Library:BindGlow(TextBoxOuter, TextBoxGlow);
+
         Library:OnHighlight(TextBoxOuter, TextBoxOuter,
             { BorderColor3 = 'AccentColor' },
             { BorderColor3 = 'Black' }
@@ -1688,14 +1754,7 @@ do
             Library:AddToolTip(Info.Tooltip, TextBoxOuter)
         end
 
-        Library:Create('UIGradient', {
-            Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 212, 212))
-            });
-            Rotation = 90;
-            Parent = TextBoxInner;
-        });
+        Library:AddGradient(TextBoxInner, 14, 90);
 
         local Container = Library:Create('Frame', {
             BackgroundTransparency = 1;
@@ -1858,6 +1917,9 @@ do
             BorderColor3 = 'OutlineColor';
         });
 
+        Library:AddGradient(ToggleInner, 12, 90);
+        local ToggleGlow = Library:AddGlow(ToggleOuter);
+
         local ToggleLabel = Library:CreateLabel({
             Size = UDim2.new(0, 216, 1, 0);
             Position = UDim2.new(1, 6, 0, 0);
@@ -1883,6 +1945,10 @@ do
             Parent = ToggleOuter;
         });
 
+        Library:BindGlow(ToggleRegion, ToggleGlow, function()
+            return Toggle.Value;
+        end);
+
         Library:OnHighlight(ToggleRegion, ToggleOuter,
             { BorderColor3 = 'AccentColor' },
             { BorderColor3 = 'Black' }
@@ -1902,6 +1968,12 @@ do
 
             Library.RegistryMap[ToggleInner].Properties.BackgroundColor3 = Toggle.Value and 'AccentColor' or 'MainColor';
             Library.RegistryMap[ToggleInner].Properties.BorderColor3 = Toggle.Value and 'AccentColorDark' or 'OutlineColor';
+
+            if ToggleGlow then
+                ToggleGlow.Transparency = Toggle.Value
+                    and (Library.GlowActiveTransparency or 0.48)
+                    or (Library.GlowTransparency or 0.82);
+            end;
         end;
 
         function Toggle:OnChanged(Func)
@@ -2015,6 +2087,10 @@ do
             BorderColor3 = 'OutlineColor';
         });
 
+        Library:AddGradient(SliderInner, 12, 90);
+        local SliderGlow = Library:AddGlow(SliderOuter);
+        Library:BindGlow(SliderOuter, SliderGlow);
+
         local Fill = Library:Create('Frame', {
             BackgroundColor3 = Library.AccentColor;
             BorderColor3 = Library.AccentColorDark;
@@ -2027,6 +2103,8 @@ do
             BackgroundColor3 = 'AccentColor';
             BorderColor3 = 'AccentColorDark';
         });
+
+        Library:AddGradient(Fill, 10, 90);
 
         local HideBorderRight = Library:Create('Frame', {
             BackgroundColor3 = Library.AccentColor;
@@ -2227,14 +2305,9 @@ do
             BorderColor3 = 'OutlineColor';
         });
 
-        Library:Create('UIGradient', {
-            Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 212, 212))
-            });
-            Rotation = 90;
-            Parent = DropdownInner;
-        });
+        Library:AddGradient(DropdownInner, 14, 90);
+        local DropdownGlow = Library:AddGlow(DropdownOuter);
+        Library:BindGlow(DropdownOuter, DropdownGlow);
 
         local DropdownArrow = Library:Create('ImageLabel', {
             AnchorPoint = Vector2.new(0, 0.5);
@@ -2303,6 +2376,9 @@ do
             BackgroundColor3 = 'MainColor';
             BorderColor3 = 'OutlineColor';
         });
+
+        Library:AddGradient(ListInner, 10, 90);
+        Library:AddGlow(ListOuter, 0.64);
 
         local Scrolling = Library:Create('ScrollingFrame', {
             BackgroundTransparency = 1;
@@ -2990,6 +3066,9 @@ function Library:CreateWindow(...)
         BorderColor3 = 'AccentColor';
     });
 
+    Library:AddGradient(Inner, 10, 90);
+    local WindowGlow = Library:AddGlow(Inner, 0.58);
+
     local WindowLabel = Library:CreateLabel({
         Position = UDim2.new(0, 7, 0, 0);
         Size = UDim2.new(0, 0, 0, 25);
@@ -3026,6 +3105,8 @@ function Library:CreateWindow(...)
     Library:AddToRegistry(MainSectionInner, {
         BackgroundColor3 = 'BackgroundColor';
     });
+
+    Library:AddGradient(MainSectionInner, 8, 90);
 
     local TabArea = Library:Create('Frame', {
         BackgroundTransparency = 1;
@@ -3081,6 +3162,9 @@ function Library:CreateWindow(...)
             BackgroundColor3 = 'BackgroundColor';
             BorderColor3 = 'OutlineColor';
         });
+
+        Library:AddGradient(TabButton, 10, 90);
+        local TabGlow = Library:AddGlow(TabButton);
 
         local TabButtonLabel = Library:CreateLabel({
             Position = UDim2.new(0, 0, 0, 0);
@@ -3170,6 +3254,7 @@ function Library:CreateWindow(...)
             Blocker.BackgroundTransparency = 0;
             TabButton.BackgroundColor3 = Library.MainColor;
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'MainColor';
+            if TabGlow then TabGlow.Transparency = Library.GlowActiveTransparency or 0.48; end;
             TabFrame.Visible = true;
         end;
 
@@ -3177,6 +3262,7 @@ function Library:CreateWindow(...)
             Blocker.BackgroundTransparency = 1;
             TabButton.BackgroundColor3 = Library.BackgroundColor;
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'BackgroundColor';
+            if TabGlow then TabGlow.Transparency = Library.GlowTransparency or 0.82; end;
             TabFrame.Visible = false;
         end;
 
@@ -3216,6 +3302,8 @@ function Library:CreateWindow(...)
                 BackgroundColor3 = 'BackgroundColor';
             });
 
+            Library:AddGradient(BoxInner, 7, 90);
+
             local Highlight = Library:Create('Frame', {
                 BackgroundColor3 = Library.AccentColor;
                 BorderSizePixel = 0;
@@ -3227,6 +3315,8 @@ function Library:CreateWindow(...)
             Library:AddToRegistry(Highlight, {
                 BackgroundColor3 = 'AccentColor';
             });
+
+            Library:AddGlow(Highlight, 0.62);
 
             local GroupboxLabel = Library:CreateLabel({
                 Size = UDim2.new(1, 0, 0, 18);
@@ -3316,6 +3406,8 @@ function Library:CreateWindow(...)
                 BackgroundColor3 = 'BackgroundColor';
             });
 
+            Library:AddGradient(BoxInner, 7, 90);
+
             local Highlight = Library:Create('Frame', {
                 BackgroundColor3 = Library.AccentColor;
                 BorderSizePixel = 0;
@@ -3327,6 +3419,8 @@ function Library:CreateWindow(...)
             Library:AddToRegistry(Highlight, {
                 BackgroundColor3 = 'AccentColor';
             });
+
+            Library:AddGlow(Highlight, 0.62);
 
             local TabboxButtons = Library:Create('Frame', {
                 BackgroundTransparency = 1;
