@@ -645,14 +645,7 @@ do
             Parent = HueBoxOuter;
         });
 
-        Library:Create('UIGradient', {
-            Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 212, 212))
-            });
-            Rotation = 90;
-            Parent = HueBoxInner;
-        });
+        Library:AddGradient(HueBoxInner, 14, 90);
 
         local HueBox = Library:Create('TextBox', {
             BackgroundTransparency = 1;
