@@ -107,10 +107,12 @@
 			duration = 0.12;
 			popup_duration = 0.10;
 			panel_duration = 0.14;
-			tab_duration = 0.10;
+			tab_duration = 0.18;
 			notification_duration = 0.16;
 			easing_style = Enum.EasingStyle.Quint;
 			easing_direction = Enum.EasingDirection.Out;
+			tab_easing_style = Enum.EasingStyle.Sine;
+			tab_easing_direction = Enum.EasingDirection.InOut;
 		};
 	}
 
@@ -1290,6 +1292,7 @@
 			local window = {
 				opened = true,
 				ui_bind = properties and properties.ui_bind or Enum.KeyCode.Insert,
+				ui_bind_debounce = properties and properties.ui_bind_debounce or 0.20,
 			}
 			local opened_panels = {}
 			local blur = library:create( "BlurEffect" , {
@@ -1653,6 +1656,8 @@
 						key = window.ui_bind,
 						mode = "toggle",
 						default = true,
+						debounce = window.ui_bind_debounce,
+						callback_on_rebind = false,
 						callback = window.set_menu_visibility,
 					})
 
@@ -2491,18 +2496,26 @@
 			-- 
 
 			function cfg.open_tab()
+				if library.current_tab and library.current_tab[1] == background then
+					return
+				end
+
 				if library.current_tab and library.current_tab[1] ~= background then 
 					local button = library.current_tab[1]
 					button.Size = dim2(1, -2, 1, -1)
 					library:tween(
 						button:FindFirstChildOfClass("UIGradient"),
 						{Rotation = 90},
-						library.animation.tab_duration
+						library.animation.tab_duration,
+						library.animation.tab_easing_style,
+						library.animation.tab_easing_direction
 					)
 					library:tween(
 						button:FindFirstChildOfClass("TextLabel"),
 						{TextColor3 = themes.preset.text},
-						library.animation.tab_duration
+						library.animation.tab_duration,
+						library.animation.tab_easing_style,
+						library.animation.tab_easing_direction
 					)
 					
 					library.current_tab[2].Visible = false
@@ -2529,7 +2542,13 @@
 
 				tab_animation_scale.Scale = 0.985
 				library.current_tab[2].Visible = true
-				library:tween(tab_animation_scale, {Scale = 1}, library.animation.tab_duration)
+				library:tween(
+					tab_animation_scale,
+					{Scale = 1},
+					library.animation.tab_duration,
+					library.animation.tab_easing_style,
+					library.animation.tab_easing_direction
+				)
 
 				if library.current_element_open and library.current_element_open ~= cfg then 
 					library.current_element_open.set_visible(false)
@@ -3957,7 +3976,10 @@
 
 				key = options.key or nil, 
 				mode = options.mode or "toggle",
-				active = options.default or false, 
+				active = options.default or false,
+				debounce = options.debounce or 0,
+				callback_on_rebind = options.callback_on_rebind ~= false,
+				last_trigger = 0,
 
 				hold_instances = {},
 			}
@@ -4230,7 +4252,9 @@
 
 						key_text.Text = string.lower(_text2)
 
-						cfg.callback(cfg.active or false)
+						if cfg.callback_on_rebind then
+							cfg.callback(cfg.active or false)
+						end
 					elseif find({"toggle", "hold", "always"}, input) then 
 						cfg.set_mode(input)
 
@@ -4329,14 +4353,20 @@
 				library:connection(uis.InputBegan, function(input, game_event) 
 					local selected_key = input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode or input.UserInputType
 
-					if not game_event then 
-						if selected_key == cfg.key then 
-							if cfg.mode == "toggle" then 
-								cfg.active = not cfg.active
-								cfg.set(cfg.active)
-							elseif cfg.mode == "hold" then 
-								cfg.set(true)
-							end
+					if not game_event and selected_key == cfg.key then
+						local now = os.clock()
+
+						if cfg.debounce > 0 and (now - cfg.last_trigger) < cfg.debounce then
+							return
+						end
+
+						cfg.last_trigger = now
+
+						if cfg.mode == "toggle" then
+							cfg.active = not cfg.active
+							cfg.set(cfg.active)
+						elseif cfg.mode == "hold" then
+							cfg.set(true)
 						end
 					end
 				end)
