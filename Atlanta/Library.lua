@@ -2532,12 +2532,16 @@
 				library:tween(
 					button:FindFirstChildOfClass("UIGradient"),
 					{Rotation = -90},
-					library.animation.tab_duration
+					library.animation.tab_duration,
+					library.animation.tab_easing_style,
+					library.animation.tab_easing_direction
 				)
 				library:tween(
 					button:FindFirstChildOfClass("TextLabel"),
 					{TextColor3 = themes.preset.accent},
-					library.animation.tab_duration
+					library.animation.tab_duration,
+					library.animation.tab_easing_style,
+					library.animation.tab_easing_direction
 				)
 
 				tab_animation_scale.Scale = 0.985
