@@ -48,6 +48,10 @@ local Library = {
     UseSubtleGradients = true;
     GradientStrength = 12;
 
+    DropdownPopupLighten = 0.07;
+    DropdownRowLighten = 0.035;
+    DropdownHoverLighten = 0.09;
+
     OpenedFrames = {};
     DependencyBoxes = {};
 
@@ -2332,7 +2336,7 @@ do
         DropdownOuter:GetPropertyChangedSignal('AbsolutePosition'):Connect(RecalculateListPosition);
 
         local ListInner = Library:Create('Frame', {
-            BackgroundColor3 = Library:GetLighterColor(Library.BackgroundColor, 0.07);
+            BackgroundColor3 = Library:GetLighterColor(Library.BackgroundColor, Library.DropdownPopupLighten);
             BorderColor3 = Library.OutlineColor;
             BorderMode = Enum.BorderMode.Inset;
             BorderSizePixel = 1;
@@ -2344,7 +2348,7 @@ do
 
         Library:AddToRegistry(ListInner, {
             BackgroundColor3 = function()
-                return Library:GetLighterColor(Library.BackgroundColor, 0.07);
+                return Library:GetLighterColor(Library.BackgroundColor, Library.DropdownPopupLighten);
             end;
             BorderColor3 = 'OutlineColor';
         });
@@ -2429,7 +2433,7 @@ do
                 Count = Count + 1;
 
                 local Button = Library:Create('Frame', {
-                    BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.035);
+                    BackgroundColor3 = Library:GetLighterColor(Library.MainColor, Library.DropdownRowLighten);
                     BorderColor3 = Library.OutlineColor;
                     BorderMode = Enum.BorderMode.Middle;
                     Size = UDim2.new(1, 0, 0, 20);
@@ -2440,7 +2444,7 @@ do
 
                 Library:AddToRegistry(Button, {
                     BackgroundColor3 = function()
-                        return Library:GetLighterColor(Library.MainColor, 0.035);
+                        return Library:GetLighterColor(Library.MainColor, Library.DropdownRowLighten);
                     end;
                     BorderColor3 = 'OutlineColor';
                 });
@@ -2467,7 +2471,7 @@ do
                 end;
 
                 Button.MouseEnter:Connect(function()
-                    Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.09);
+                    Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, Library.DropdownHoverLighten);
                     Button.BorderColor3 = Library.AccentColor;
                     Button.ZIndex = 24;
                 end);
@@ -2475,7 +2479,7 @@ do
                 Button.MouseLeave:Connect(function()
                     Button.BackgroundColor3 = Selected
                         and Library:GetLighterColor(Library.AccentColorDark, 0.05)
-                        or Library:GetLighterColor(Library.MainColor, 0.035);
+                        or Library:GetLighterColor(Library.MainColor, Library.DropdownRowLighten);
                     Button.BorderColor3 = Library.OutlineColor;
                     Button.ZIndex = 23;
                 end);
@@ -2493,7 +2497,7 @@ do
                     if Selected then
                         Button.BackgroundColor3 = Library:GetLighterColor(Library.AccentColorDark, 0.05);
                     else
-                        Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.035);
+                        Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, Library.DropdownRowLighten);
                     end;
                 end;
 
