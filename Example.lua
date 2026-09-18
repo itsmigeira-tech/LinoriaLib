@@ -12,6 +12,14 @@ local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua' .. 
 local Toggles = Library.Toggles
 local Options = Library.Options
 
+-- Visual layer: original Linoria layout, enhanced gradients and subtle glow.
+Library.UseGradients = true
+Library.GradientStrength = 16
+Library.UseGlow = true
+Library.GlowTransparency = 0.82
+Library.GlowHoverTransparency = 0.38
+Library.GlowActiveTransparency = 0.48
+
 local Window = Library:CreateWindow({
     -- Set Center to true if you want the menu to appear in the center
     -- Set AutoShow to true if you want the menu to appear when it is created
