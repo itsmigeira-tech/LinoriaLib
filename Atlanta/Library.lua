@@ -97,7 +97,21 @@
 		instances = {}; 
 		drawings = {};
 
-		display_orders = 0; 
+		display_orders = 0;
+
+		panels = {};
+		active_tweens = {};
+		popup_tokens = {};
+
+		animation = {
+			duration = 0.12;
+			popup_duration = 0.10;
+			panel_duration = 0.14;
+			tab_duration = 0.10;
+			notification_duration = 0.16;
+			easing_style = Enum.EasingStyle.Quint;
+			easing_direction = Enum.EasingDirection.Out;
+		};
 	}
 
 	local flags = library.flags
@@ -439,11 +453,81 @@
 			return enum_table
 		end
 
-		function library:tween(obj, properties) 
-			local tween = tween_service:Create(obj, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0, false, 0), properties):Play()
-				
+		function library:tween(obj, properties, duration, easing_style, easing_direction)
+			if not obj then return nil end
+
+			local active = library.active_tweens[obj]
+			if active then
+				pcall(function()
+					active:Cancel()
+				end)
+			end
+
+			local tween = tween_service:Create(
+				obj,
+				TweenInfo.new(
+					duration or library.animation.duration,
+					easing_style or library.animation.easing_style,
+					easing_direction or library.animation.easing_direction
+				),
+				properties
+			)
+
+			library.active_tweens[obj] = tween
+
+			local completed_connection
+			completed_connection = tween.Completed:Connect(function()
+				if library.active_tweens[obj] == tween then
+					library.active_tweens[obj] = nil
+				end
+
+				if completed_connection then
+					completed_connection:Disconnect()
+				end
+			end)
+
+			tween:Play()
 			return tween
-		end 
+		end
+
+		function library:animate_popup(obj, visible)
+			if not obj then return end
+
+			local scale = obj:FindFirstChild("AtlantaAnimationScale")
+			if not scale then
+				scale = library:create("UIScale", {
+					Parent = obj,
+					Name = "AtlantaAnimationScale",
+					Scale = 1,
+				})
+			end
+
+			local token = (library.popup_tokens[obj] or 0) + 1
+			library.popup_tokens[obj] = token
+
+			if visible then
+				obj.Visible = true
+				scale.Scale = 0.97
+				library:tween(scale, {Scale = 1}, library.animation.popup_duration)
+			else
+				if not obj.Visible then return end
+
+				library:tween(
+					scale,
+					{Scale = 0.98},
+					library.animation.popup_duration,
+					Enum.EasingStyle.Quad,
+					Enum.EasingDirection.In
+				)
+
+				task.delay(library.animation.popup_duration, function()
+					if library.popup_tokens[obj] == token then
+						obj.Visible = false
+						scale.Scale = 1
+					end
+				end)
+			end
+		end
 
 		function library:config_list_update(force)
 			if not config_holder then return {} end
@@ -705,6 +789,12 @@
 					library:draggify(items.main_holder)
 					library:make_resizable(items.main_holder)
 
+					items.animation_scale = library:create("UIScale", {
+						Parent = items.main_holder,
+						Name = "AtlantaPanelScale",
+						Scale = cfg.open and 1 or 0.985,
+					})
+
 
 					--library:apply_theme(main_holder, "outline", "BackgroundColor3") 
 					
@@ -846,18 +936,55 @@
 				-- 
 				
 				-- Panel visibility is controlled by features/tabs, not dock widgets.
-				function cfg.set_visible(bool)
+				function cfg.set_visible(bool, instant)
 					cfg.open = bool == true
-					items.sgui.Enabled = cfg.open
+					cfg._visibility_token = (cfg._visibility_token or 0) + 1
+					local token = cfg._visibility_token
+
+					if cfg.open then
+						items.sgui.Enabled = true
+
+						if instant then
+							items.animation_scale.Scale = 1
+						else
+							items.animation_scale.Scale = 0.985
+							library:tween(items.animation_scale, {Scale = 1}, library.animation.panel_duration)
+						end
+					elseif instant then
+						items.sgui.Enabled = false
+						items.animation_scale.Scale = 1
+					elseif items.sgui.Enabled then
+						library:tween(
+							items.animation_scale,
+							{Scale = 0.985},
+							library.animation.panel_duration,
+							Enum.EasingStyle.Quad,
+							Enum.EasingDirection.In
+						)
+
+						task.delay(library.animation.panel_duration, function()
+							if cfg._visibility_token == token and not cfg.open then
+								items.sgui.Enabled = false
+								items.animation_scale.Scale = 1
+							end
+						end)
+					end
 				end
 
 				function cfg.toggle()
-					cfg.set_visible(not items.sgui.Enabled)
+					cfg.set_visible(not cfg.open)
 				end
 
 				function cfg.is_visible()
-					return items.sgui.Enabled
+					return cfg.open and items.sgui.Enabled
 				end
+			end
+
+			insert(library.panels, cfg)
+
+			if cfg.open then
+				items.animation_scale.Scale = 0.985
+				library:tween(items.animation_scale, {Scale = 1}, library.animation.panel_duration)
 			end
 
 			return setmetatable(cfg, library)
@@ -1160,9 +1287,11 @@
 		end     
 
 		function library:window(properties)
-			local window = {opened = true}            
-			local opened = {}
-			local dock_outline;
+			local window = {
+				opened = true,
+				ui_bind = properties and properties.ui_bind or Enum.KeyCode.Insert,
+			}
+			local opened_panels = {}
 			local blur = library:create( "BlurEffect" , {
 				Parent = lighting;
 				Enabled = true;
@@ -1175,41 +1304,53 @@
 				Name = "" 
 			})
 
-			function window.set_menu_visibility(bool) 
-				window.opened = bool 
-				
-				if bool then 
-					for _,gui in opened do 
-						gui.Enabled = true 
-						opened = {}
-					end 
+			function window.set_menu_visibility(bool)
+				bool = bool == true
+
+				if bool == window.opened then
+					return
+				end
+
+				window.opened = bool
+
+				if bool then
+					for _, panel in opened_panels do
+						panel.set_visible(true)
+					end
+
+					opened_panels = {}
 				else
-					for _,gui in library.guis do 
-						if gui.Enabled then 
-							gui.Enabled = false
-							table.insert(opened, gui)
+					opened_panels = {}
+
+					for _, panel in library.panels do
+						if panel.is_visible() then
+							insert(opened_panels, panel)
+							panel.set_visible(false)
 						end
 					end
 				end
 
-				library:tween(blur, {Size = bool and (flags["Blur Size"] or 15) or 0})
-
+				library:tween(
+					blur,
+					{Size = bool and (flags["Blur Size"] or 15) or 0},
+					library.animation.panel_duration
+				)
 
 				sgui.Enabled = true
 				notif_holder.Enabled = true
 				tooltip_sgui.Enabled = true
 				library.cache.Enabled = false
 
-				for _,tooltip in tooltip_sgui:GetChildren() do 
-					tooltip.Visible = false;
-				end 
-
-				if library.current_element_open then 
-					library.current_element_open.set_visible(false)
-					library.current_element_open.open = false 
-					library.current_element_open = nil 
+				for _, tooltip in tooltip_sgui:GetChildren() do
+					tooltip.Visible = false
 				end
-			end 
+
+				if library.current_element_open then
+					library.current_element_open.set_visible(false)
+					library.current_element_open.open = false
+					library.current_element_open = nil
+				end
+			end
 
 			-- keybind list
 				local outline = library:create("Frame", {
@@ -1505,6 +1646,15 @@
 
 					local column = configuration:column()
 					local section = column:section({name = "Options"})
+
+					section:label({name = "UI Bind"})
+					:keybind({
+						flag = "ui_bind",
+						key = window.ui_bind,
+						mode = "toggle",
+						default = true,
+						callback = window.set_menu_visibility,
+					})
 
 					section:toggle({
 						name = "ESP Preview",
@@ -2097,7 +2247,7 @@
 
 		function library:refresh_notifications()  	
 			for _, notif in next, library.notifications do 
-				tween_service:Create(notif, TweenInfo.new(0.3, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {Position = dim2(0, 20, 0, 72 + (_ * 28))}):Play()
+				library:tween(notif, {Position = dim2(0, 20, 0, 72 + (_ * 28))}, library.animation.notification_duration)
 			end     
 		end
 
@@ -2213,9 +2363,9 @@
 
 				library:refresh_notifications()
 
-				tween_service:Create(watermark_outline, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {AnchorPoint = Vector2.new(0, 0)}):Play()
+				library:tween(watermark_outline, {AnchorPoint = Vector2.new(0, 0)}, library.animation.notification_duration)
 				
-				tween_service:Create(accent_bottom, TweenInfo.new(cfg.time, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(1, -4, 0, 1)}):Play()
+				library:tween(accent_bottom, {Size = UDim2.new(1, -4, 0, 1)}, cfg.time, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
 			--
 			
 			task.spawn(function()
@@ -2223,21 +2373,21 @@
 
 				library.notifications[index] = nil
 
-				tween_service:Create(watermark_outline, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {AnchorPoint = Vector2.new(1, 0), BackgroundTransparency = 1}):Play()
+				library:tween(watermark_outline, {AnchorPoint = Vector2.new(1, 0), BackgroundTransparency = 1}, library.animation.notification_duration, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 				
 				for _, v in next, watermark_outline:GetDescendants() do 
 					if v:IsA("TextLabel") then 
-						tween_service:Create(v, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {TextTransparency = 1}):Play()
+						library:tween(v, {TextTransparency = 1}, library.animation.notification_duration, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 					elseif v:IsA("Frame") then 
-						tween_service:Create(v, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
+						library:tween(v, {BackgroundTransparency = 1}, library.animation.notification_duration, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 					elseif v:IsA("ImageLabel") then
-						tween_service:Create(v, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {ImageTransparency = 1}):Play()
+						library:tween(v, {ImageTransparency = 1}, library.animation.notification_duration, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 					elseif v:IsA("UIStroke") then 
-						tween_service:Create(v, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Transparency = 1}):Play()
+						library:tween(v, {Transparency = 1}, library.animation.notification_duration, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 					end 
 				end 
 
-				task.wait(1)
+				task.wait(library.animation.notification_duration)
 
 				watermark_outline:Destroy()
 			end)    
@@ -2323,6 +2473,12 @@
 					BackgroundColor3 = rgb(255, 255, 255)
 				})
 			
+				local tab_animation_scale = library:create("UIScale", {
+					Parent = section_holder,
+					Name = "AtlantaTabScale",
+					Scale = 1,
+				})
+
 				cfg["holder"] = section_holder
 
 				library:create("UIListLayout", {
@@ -2338,9 +2494,17 @@
 				if library.current_tab and library.current_tab[1] ~= background then 
 					local button = library.current_tab[1]
 					button.Size = dim2(1, -2, 1, -1)
-					button:FindFirstChildOfClass("UIGradient").Rotation = 90
-					button:FindFirstChildOfClass("TextLabel").TextColor3 = themes.preset.text
-						
+					library:tween(
+						button:FindFirstChildOfClass("UIGradient"),
+						{Rotation = 90},
+						library.animation.tab_duration
+					)
+					library:tween(
+						button:FindFirstChildOfClass("TextLabel"),
+						{TextColor3 = themes.preset.text},
+						library.animation.tab_duration
+					)
+					
 					library.current_tab[2].Visible = false
 					
 					library.current_tab = nil
@@ -2352,10 +2516,20 @@
 				
 				local button = library.current_tab[1] 
 				button.Size = dim2(1, -2, 1, 0) -- ENABLED
-				button:FindFirstChildOfClass("UIGradient").Rotation = -90
-				button:FindFirstChildOfClass("TextLabel").TextColor3 = themes.preset.accent 
+				library:tween(
+					button:FindFirstChildOfClass("UIGradient"),
+					{Rotation = -90},
+					library.animation.tab_duration
+				)
+				library:tween(
+					button:FindFirstChildOfClass("TextLabel"),
+					{TextColor3 = themes.preset.accent},
+					library.animation.tab_duration
+				)
 
-				library.current_tab[2].Visible = true 
+				tab_animation_scale.Scale = 0.985
+				library.current_tab[2].Visible = true
+				library:tween(tab_animation_scale, {Scale = 1}, library.animation.tab_duration)
 
 				if library.current_element_open and library.current_element_open ~= cfg then 
 					library.current_element_open.set_visible(false)
@@ -3650,7 +3824,7 @@
 			-- 
 				
 			function cfg.set_visible(bool)
-				colorpicker_holder.Visible = bool
+				library:animate_popup(colorpicker_holder, bool)
 
 				if bool then 
 					if library.current_element_open and library.current_element_open ~= cfg then 
@@ -4006,7 +4180,7 @@
 
 			-- init 
 				function cfg.set_visible(bool)
-					keybind_selector.Visible = bool
+					library:animate_popup(keybind_selector, bool)
 					keybind_selector.Position = dim2(0, element_outline.AbsolutePosition.X + 1, 0, element_outline.AbsolutePosition.Y + 17)
 
 					if bool then 
@@ -4544,7 +4718,7 @@
 			function cfg.set_visible(bool) 
 				library.current_element_open = cfg.ignore or cfg
 
-				dropdown_holder.Visible = bool
+				library:animate_popup(dropdown_holder, bool)
 
 				plus.Text = bool and "-" or "+"
 				plus.TextSize = bool and 12 or 8
