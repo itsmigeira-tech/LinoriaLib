@@ -2238,7 +2238,7 @@ do
         if not Info.Compact then
             local DropdownLabel = Library:CreateLabel({
                 Size = UDim2.new(1, 0, 0, 10);
-                TextSize = 14;
+                TextSize = 12;
                 Text = Info.Text;
                 TextXAlignment = Enum.TextXAlignment.Left;
                 TextYAlignment = Enum.TextYAlignment.Bottom;
@@ -3124,7 +3124,7 @@ function Library:CreateWindow(...)
         BackgroundColor3 = 'BackgroundColor';
     });
 
-    Library:AddSubtleGradient(MainSectionInner, 6, 90);
+    Library:AddSubtleGradient(MainSectionInner, 4, 90);
 
     local TabArea = Library:Create('Frame', {
         BackgroundTransparency = 1;
@@ -3153,7 +3153,7 @@ function Library:CreateWindow(...)
     
 
     Library:AddToRegistry(TabContainer, {
-        BackgroundColor3 = 'MainColor';
+        BackgroundColor3 = 'BackgroundColor';
         BorderColor3 = 'OutlineColor';
     });
 
@@ -3179,7 +3179,7 @@ function Library:CreateWindow(...)
         });
 
         Library:AddToRegistry(TabButton, {
-            BackgroundColor3 = 'BackgroundColor';
+            BackgroundColor3 = 'ControlColor';
             BorderColor3 = 'OutlineColor';
         });
 
@@ -3323,7 +3323,7 @@ function Library:CreateWindow(...)
                 BackgroundColor3 = 'SectionColor';
             });
 
-            Library:AddSubtleGradient(BoxInner, 6, 90);
+            Library:AddSubtleGradient(BoxInner, 4, 90);
 
             local Highlight = Library:Create('Frame', {
                 BackgroundColor3 = Library.AccentColor;
@@ -3424,7 +3424,7 @@ function Library:CreateWindow(...)
                 BackgroundColor3 = 'SectionColor';
             });
 
-            Library:AddSubtleGradient(BoxInner, 6, 90);
+            Library:AddSubtleGradient(BoxInner, 4, 90);
 
             local Highlight = Library:Create('Frame', {
                 BackgroundColor3 = Library.AccentColor;
@@ -3457,22 +3457,23 @@ function Library:CreateWindow(...)
                 local Tab = {};
 
                 local Button = Library:Create('Frame', {
-                    BackgroundColor3 = Library.MainColor;
-                    BorderColor3 = Color3.new(0, 0, 0);
+                    BackgroundColor3 = Library.ControlColor;
+                    BorderColor3 = Library.OutlineColor;
                     Size = UDim2.new(0.5, 0, 1, 0);
                     ZIndex = 6;
                     Parent = TabboxButtons;
                 });
 
                 Library:AddToRegistry(Button, {
-                    BackgroundColor3 = 'MainColor';
+                    BackgroundColor3 = 'ControlColor';
+                    BorderColor3 = 'OutlineColor';
                 });
 
                 Library:AddSubtleGradient(Button, 9, 90);
 
                 local ButtonLabel = Library:CreateLabel({
                     Size = UDim2.new(1, 0, 1, 0);
-                    TextSize = 14;
+                    TextSize = 12;
                     Text = Name;
                     TextXAlignment = Enum.TextXAlignment.Center;
                     ZIndex = 7;
@@ -3480,9 +3481,9 @@ function Library:CreateWindow(...)
                 });
 
                 local Block = Library:Create('Frame', {
-                    BackgroundColor3 = Library.BackgroundColor;
+                    BackgroundColor3 = Library.AccentColor;
                     BorderSizePixel = 0;
-                    Position = UDim2.new(0, 0, 1, 0);
+                    Position = UDim2.new(0, 0, 1, -1);
                     Size = UDim2.new(1, 0, 0, 1);
                     Visible = false;
                     ZIndex = 9;
@@ -3490,7 +3491,7 @@ function Library:CreateWindow(...)
                 });
 
                 Library:AddToRegistry(Block, {
-                    BackgroundColor3 = 'BackgroundColor';
+                    BackgroundColor3 = 'AccentColor';
                 });
 
                 local Container = Library:Create('Frame', {
@@ -3516,8 +3517,10 @@ function Library:CreateWindow(...)
                     Container.Visible = true;
                     Block.Visible = true;
 
-                    Button.BackgroundColor3 = Library.BackgroundColor;
-                    Library.RegistryMap[Button].Properties.BackgroundColor3 = 'BackgroundColor';
+                    Button.BackgroundColor3 = Library.SectionColor;
+                    ButtonLabel.TextColor3 = Library.AccentColor;
+                    Library.RegistryMap[Button].Properties.BackgroundColor3 = 'SectionColor';
+                    Library.RegistryMap[ButtonLabel].Properties.TextColor3 = 'AccentColor';
 
                     Tab:Resize();
                 end;
@@ -3526,8 +3529,10 @@ function Library:CreateWindow(...)
                     Container.Visible = false;
                     Block.Visible = false;
 
-                    Button.BackgroundColor3 = Library.MainColor;
-                    Library.RegistryMap[Button].Properties.BackgroundColor3 = 'MainColor';
+                    Button.BackgroundColor3 = Library.ControlColor;
+                    ButtonLabel.TextColor3 = Library.FontColor;
+                    Library.RegistryMap[Button].Properties.BackgroundColor3 = 'ControlColor';
+                    Library.RegistryMap[ButtonLabel].Properties.TextColor3 = 'FontColor';
                 end;
 
                 function Tab:Resize()
