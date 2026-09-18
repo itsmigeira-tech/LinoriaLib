@@ -12,17 +12,6 @@ local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua' .. 
 local Toggles = Library.Toggles
 local Options = Library.Options
 
--- Visual layer: original Linoria layout, enhanced gradients and subtle glow.
-Library:SetVisualEffects({
-    UseGradients = true,
-    GradientStrength = 16,
-    UseGlow = true,
-    GlowTransparency = 0.82,
-    GlowHoverTransparency = 0.38,
-    GlowActiveTransparency = 0.48,
-    GlowThickness = 1.35
-})
-
 local Window = Library:CreateWindow({
     -- Set Center to true if you want the menu to appear in the center
     -- Set AutoShow to true if you want the menu to appear when it is created
@@ -74,7 +63,6 @@ LeftGroupBox:AddToggle('MyToggle', {
     Tooltip = 'This is a tooltip', -- Information shown when you hover over the toggle
 
     Callback = function(Value)
-        print('[cb] MyToggle changed to:', Value)
     end
 })
 
@@ -89,10 +77,8 @@ LeftGroupBox:AddToggle('MyToggle', {
 -- Calls the passed function when the toggle is updated
 Toggles.MyToggle:OnChanged(function()
     -- here we get our toggle object & then get its value
-    print('MyToggle changed to:', Toggles.MyToggle.Value)
 end)
 
--- This should print to the console: "My toggle state changed! New value: false"
 Toggles.MyToggle:SetValue(false)
 
 -- 1/15/23
@@ -114,7 +100,6 @@ Toggles.MyToggle:SetValue(false)
 local MyButton = LeftGroupBox:AddButton({
     Text = 'Button',
     Func = function()
-        print('You clicked a button!')
     end,
     DoubleClick = false,
     Tooltip = 'This is the main button'
@@ -123,7 +108,6 @@ local MyButton = LeftGroupBox:AddButton({
 local MyButton2 = MyButton:AddButton({
     Text = 'Sub button',
     Func = function()
-        print('You clicked a sub button!')
     end,
     DoubleClick = true, -- You will have to click this button twice to trigger the callback
     Tooltip = 'This is the sub button (double click me!)'
@@ -179,7 +163,6 @@ LeftGroupBox:AddSlider('MySlider', {
     Compact = false,
 
     Callback = function(Value)
-        print('[cb] MySlider was changed! New value:', Value)
     end
 })
 
@@ -189,10 +172,8 @@ LeftGroupBox:AddSlider('MySlider', {
 
 local Number = Options.MySlider.Value
 Options.MySlider:OnChanged(function()
-    print('MySlider was changed! New value:', Options.MySlider.Value)
 end)
 
--- This should print to the console: "MySlider was changed! New value: 3"
 Options.MySlider:SetValue(3)
 
 -- Groupbox:AddInput
@@ -209,12 +190,10 @@ LeftGroupBox:AddInput('MyTextbox', {
     -- MaxLength is also an option which is the max length of the text
 
     Callback = function(Value)
-        print('[cb] Text updated. New text:', Value)
     end
 })
 
 Options.MyTextbox:OnChanged(function()
-    print('Text updated. New text:', Options.MyTextbox.Value)
 end)
 
 -- Groupbox:AddDropdown
@@ -229,12 +208,10 @@ LeftGroupBox:AddDropdown('MyDropdown', {
     Tooltip = 'This is a tooltip', -- Information shown when you hover over the dropdown
 
     Callback = function(Value)
-        print('[cb] Dropdown got changed. New value:', Value)
     end
 })
 
 Options.MyDropdown:OnChanged(function()
-    print('Dropdown got changed. New value:', Options.MyDropdown.Value)
 end)
 
 Options.MyDropdown:SetValue('This')
@@ -254,15 +231,11 @@ LeftGroupBox:AddDropdown('MyMultiDropdown', {
     Tooltip = 'This is a tooltip', -- Information shown when you hover over the dropdown
 
     Callback = function(Value)
-        print('[cb] Multi dropdown got changed:', Value)
     end
 })
 
 Options.MyMultiDropdown:OnChanged(function()
-    -- print('Dropdown got changed. New value:', )
-    print('Multi dropdown got changed:')
     for key, value in next, Options.MyMultiDropdown.Value do
-        print(key, value) -- should print something like This, true
     end
 end)
 
@@ -277,7 +250,6 @@ LeftGroupBox:AddDropdown('MyPlayerDropdown', {
     Tooltip = 'This is a tooltip', -- Information shown when you hover over the dropdown
 
     Callback = function(Value)
-        print('[cb] Player dropdown got changed:', Value)
     end
 })
 
@@ -292,13 +264,10 @@ LeftGroupBox:AddLabel('Color'):AddColorPicker('ColorPicker', {
     Transparency = 0, -- Optional. Enables transparency changing for this color picker (leave as nil to disable)
 
     Callback = function(Value)
-        print('[cb] Color changed!', Value)
     end
 })
 
 Options.ColorPicker:OnChanged(function()
-    print('Color changed!', Options.ColorPicker.Value)
-    print('Transparency changed!', Options.ColorPicker.Transparency)
 end)
 
 Options.ColorPicker:SetValueRGB(Color3.fromRGB(0, 255, 140))
@@ -325,23 +294,19 @@ LeftGroupBox:AddLabel('Keybind'):AddKeyPicker('KeyPicker', {
 
     -- Occurs when the keybind is clicked, Value is `true`/`false`
     Callback = function(Value)
-        print('[cb] Keybind clicked!', Value)
     end,
 
     -- Occurs when the keybind itself is changed, `New` is a KeyCode Enum OR a UserInputType Enum
     ChangedCallback = function(New)
-        print('[cb] Keybind changed!', New)
     end
 })
 
 -- OnClick is only fired when you press the keybind and the mode is Toggle
 -- Otherwise, you will have to use Keybind:GetState()
 Options.KeyPicker:OnClick(function()
-    print('Keybind clicked!', Options.KeyPicker:GetState())
 end)
 
 Options.KeyPicker:OnChanged(function()
-    print('Keybind changed!', Options.KeyPicker.Value)
 end)
 
 task.spawn(function()
@@ -351,7 +316,6 @@ task.spawn(function()
         -- example for checking if a keybind is being pressed
         local state = Options.KeyPicker:GetState()
         if state then
-            print('KeyPicker is being held down')
         end
 
         if Library.Unloaded then break end
@@ -425,7 +389,6 @@ Library.KeybindFrame.Visible = true; -- todo: add a function for this
 Library:OnUnload(function()
     WatermarkConnection:Disconnect()
 
-    print('Unloaded!')
     Library.Unloaded = true
 end)
 
