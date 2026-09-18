@@ -45,6 +45,9 @@ local Library = {
     UseUICorners = true;
     CornerRadius = UDim.new(0, 4);
 
+    UseSubtleGradients = true;
+    GradientStrength = 12;
+
     OpenedFrames = {};
     DependencyBoxes = {};
 
@@ -163,6 +166,24 @@ function Library:Create(Class, Properties)
     end;
 
     return _Instance;
+end;
+
+function Library:AddSubtleGradient(Parent, Strength, Rotation)
+    if not Library.UseSubtleGradients or not Parent then
+        return nil;
+    end;
+
+    local Amount = math.clamp(Strength or Library.GradientStrength or 12, 0, 40);
+    local Shade = 255 - Amount;
+
+    return Library:Create('UIGradient', {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(Shade, Shade, Shade))
+        });
+        Rotation = Rotation or 90;
+        Parent = Parent;
+    });
 end;
 
 function Library:ApplyTextStroke(Inst)
@@ -608,14 +629,7 @@ do
             Parent = HueBoxOuter;
         });
 
-        Library:Create('UIGradient', {
-            Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 212, 212))
-            });
-            Rotation = 90;
-            Parent = HueBoxInner;
-        });
+        Library:AddSubtleGradient(HueBoxInner, 12, 90);
 
         local HueBox = Library:Create('TextBox', {
             BackgroundTransparency = 1;
@@ -1718,14 +1732,7 @@ do
             Library:AddToolTip(Info.Tooltip, TextBoxOuter)
         end
 
-        Library:Create('UIGradient', {
-            Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 212, 212))
-            });
-            Rotation = 90;
-            Parent = TextBoxInner;
-        });
+        Library:AddSubtleGradient(TextBoxInner, 12, 90);
 
         local Container = Library:Create('Frame', {
             BackgroundTransparency = 1;
@@ -1888,6 +1895,8 @@ do
             BorderColor3 = 'OutlineColor';
         });
 
+        Library:AddSubtleGradient(ToggleInner, 10, 90);
+
         local ToggleLabel = Library:CreateLabel({
             Size = UDim2.new(0, 216, 1, 0);
             Position = UDim2.new(1, 6, 0, 0);
@@ -2045,6 +2054,8 @@ do
             BorderColor3 = 'OutlineColor';
         });
 
+        Library:AddSubtleGradient(SliderInner, 10, 90);
+
         local Fill = Library:Create('Frame', {
             BackgroundColor3 = Library.AccentColor;
             BorderColor3 = Library.AccentColorDark;
@@ -2057,6 +2068,8 @@ do
             BackgroundColor3 = 'AccentColor';
             BorderColor3 = 'AccentColorDark';
         });
+
+        Library:AddSubtleGradient(Fill, 8, 90);
 
         local HideBorderRight = Library:Create('Frame', {
             BackgroundColor3 = Library.AccentColor;
@@ -2257,14 +2270,7 @@ do
             BorderColor3 = 'OutlineColor';
         });
 
-        Library:Create('UIGradient', {
-            Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 212, 212))
-            });
-            Rotation = 90;
-            Parent = DropdownInner;
-        });
+        Library:AddSubtleGradient(DropdownInner, 12, 90);
 
         local DropdownArrow = Library:Create('ImageLabel', {
             AnchorPoint = Vector2.new(0, 0.5);
@@ -3020,6 +3026,8 @@ function Library:CreateWindow(...)
         BorderColor3 = 'AccentColor';
     });
 
+    Library:AddSubtleGradient(Inner, 8, 90);
+
     local WindowLabel = Library:CreateLabel({
         Position = UDim2.new(0, 7, 0, 0);
         Size = UDim2.new(0, 0, 0, 25);
@@ -3056,6 +3064,8 @@ function Library:CreateWindow(...)
     Library:AddToRegistry(MainSectionInner, {
         BackgroundColor3 = 'BackgroundColor';
     });
+
+    Library:AddSubtleGradient(MainSectionInner, 6, 90);
 
     local TabArea = Library:Create('Frame', {
         BackgroundTransparency = 1;
@@ -3111,6 +3121,8 @@ function Library:CreateWindow(...)
             BackgroundColor3 = 'BackgroundColor';
             BorderColor3 = 'OutlineColor';
         });
+
+        Library:AddSubtleGradient(TabButton, 9, 90);
 
         local TabButtonLabel = Library:CreateLabel({
             Position = UDim2.new(0, 0, 0, 0);
@@ -3246,6 +3258,8 @@ function Library:CreateWindow(...)
                 BackgroundColor3 = 'BackgroundColor';
             });
 
+            Library:AddSubtleGradient(BoxInner, 6, 90);
+
             local Highlight = Library:Create('Frame', {
                 BackgroundColor3 = Library.AccentColor;
                 BorderSizePixel = 0;
@@ -3346,6 +3360,8 @@ function Library:CreateWindow(...)
                 BackgroundColor3 = 'BackgroundColor';
             });
 
+            Library:AddSubtleGradient(BoxInner, 6, 90);
+
             local Highlight = Library:Create('Frame', {
                 BackgroundColor3 = Library.AccentColor;
                 BorderSizePixel = 0;
@@ -3387,6 +3403,8 @@ function Library:CreateWindow(...)
                 Library:AddToRegistry(Button, {
                     BackgroundColor3 = 'MainColor';
                 });
+
+                Library:AddSubtleGradient(Button, 9, 90);
 
                 local ButtonLabel = Library:CreateLabel({
                     Size = UDim2.new(1, 0, 1, 0);
