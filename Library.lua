@@ -2307,6 +2307,8 @@ do
         end
 
         local MAX_DROPDOWN_ITEMS = 8;
+        local DROPDOWN_ROW_HEIGHT = 20;
+        local DROPDOWN_SHELL_PADDING = 6;
 
         local ListOuter = Library:Create('Frame', {
             BackgroundColor3 = Library.Black;
@@ -2326,8 +2328,12 @@ do
             ListOuter.Position = UDim2.fromOffset(DropdownOuter.AbsolutePosition.X, DropdownOuter.AbsolutePosition.Y + DropdownOuter.Size.Y.Offset + 1);
         end;
 
-        local function RecalculateListSize(YSize)
-            ListOuter.Size = UDim2.fromOffset(DropdownOuter.AbsoluteSize.X, YSize or (MAX_DROPDOWN_ITEMS * 20 + 2))
+        local function RecalculateListSize(ContentHeight)
+            local VisibleContentHeight = ContentHeight or (MAX_DROPDOWN_ITEMS * DROPDOWN_ROW_HEIGHT);
+            ListOuter.Size = UDim2.fromOffset(
+                DropdownOuter.AbsoluteSize.X,
+                VisibleContentHeight + DROPDOWN_SHELL_PADDING
+            );
         end;
 
         RecalculateListPosition();
@@ -2367,7 +2373,7 @@ do
             TopImage = 'rbxasset://textures/ui/Scroll/scroll-middle.png',
             BottomImage = 'rbxasset://textures/ui/Scroll/scroll-middle.png',
 
-            ScrollBarThickness = 3,
+            ScrollBarThickness = 0,
             ScrollBarImageColor3 = Library.AccentColor,
         });
 
@@ -2434,9 +2440,8 @@ do
 
                 local Button = Library:Create('Frame', {
                     BackgroundColor3 = Library:GetLighterColor(Library.MainColor, Library.DropdownRowLighten);
-                    BorderColor3 = Library.OutlineColor;
-                    BorderMode = Enum.BorderMode.Middle;
-                    Size = UDim2.new(1, 0, 0, 20);
+                    BorderSizePixel = 0;
+                    Size = UDim2.new(1, 0, 0, DROPDOWN_ROW_HEIGHT);
                     ZIndex = 23;
                     Active = true,
                     Parent = Scrolling;
@@ -2446,7 +2451,6 @@ do
                     BackgroundColor3 = function()
                         return Library:GetLighterColor(Library.MainColor, Library.DropdownRowLighten);
                     end;
-                    BorderColor3 = 'OutlineColor';
                 });
 
                 Library:AddSubtleGradient(Button, 7, 90);
@@ -2471,16 +2475,14 @@ do
                 end;
 
                 Button.MouseEnter:Connect(function()
-                    Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, Library.DropdownHoverLighten);
-                    Button.BorderColor3 = Library.AccentColor;
+                    Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, math.max(Library.DropdownHoverLighten, 0.12));
                     Button.ZIndex = 24;
                 end);
 
                 Button.MouseLeave:Connect(function()
                     Button.BackgroundColor3 = Selected
-                        and Library:GetLighterColor(Library.AccentColorDark, 0.05)
+                        and Library:GetLighterColor(Library.MainColor, 0.10)
                         or Library:GetLighterColor(Library.MainColor, Library.DropdownRowLighten);
-                    Button.BorderColor3 = Library.OutlineColor;
                     Button.ZIndex = 23;
                 end);
 
@@ -2495,7 +2497,7 @@ do
                     Library.RegistryMap[ButtonLabel].Properties.TextColor3 = Selected and 'AccentColor' or 'FontColor';
 
                     if Selected then
-                        Button.BackgroundColor3 = Library:GetLighterColor(Library.AccentColorDark, 0.05);
+                        Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.10);
                     else
                         Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, Library.DropdownRowLighten);
                     end;
@@ -2546,10 +2548,12 @@ do
                 Buttons[Button] = Table;
             end;
 
-            Scrolling.CanvasSize = UDim2.fromOffset(0, (Count * 20) + 1);
+            local ContentHeight = Count * DROPDOWN_ROW_HEIGHT;
+            Scrolling.CanvasSize = UDim2.fromOffset(0, ContentHeight);
+            Scrolling.ScrollBarThickness = Count > MAX_DROPDOWN_ITEMS and 3 or 0;
 
-            local Y = math.clamp(Count * 20, 0, MAX_DROPDOWN_ITEMS * 20) + 1;
-            RecalculateListSize(Y);
+            local VisibleRows = math.min(Count, MAX_DROPDOWN_ITEMS);
+            RecalculateListSize(VisibleRows * DROPDOWN_ROW_HEIGHT);
         end;
 
         function Dropdown:SetValues(NewValues)
