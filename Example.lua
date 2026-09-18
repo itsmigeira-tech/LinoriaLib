@@ -209,7 +209,7 @@ end)
 -- Arguments: Idx, Info
 
 LeftGroupBox:AddDropdown('MyDropdown', {
-    Values = { 'This', 'is', 'a', 'dropdown' },
+    Values = { 'This', 'is', 'a', 'dropdown', 'with', 'clean', 'popup', 'rows', 'and', 'scrolling' },
     Default = 1, -- number index of the value / string
     Multi = false, -- true / false, allows multiple choices to be selected
 
@@ -234,7 +234,7 @@ LeftGroupBox:AddDropdown('MyMultiDropdown', {
 
     -- Currently you can not set multiple values with a dropdown
 
-    Values = { 'This', 'is', 'a', 'dropdown' },
+    Values = { 'This', 'is', 'a', 'multi', 'dropdown' },
     Default = 1,
     Multi = true, -- true / false, allows multiple choices to be selected
 
