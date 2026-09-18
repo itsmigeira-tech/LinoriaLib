@@ -368,6 +368,13 @@ function Library:GetDarkerColor(Color)
     local H, S, V = Color3.toHSV(Color);
     return Color3.fromHSV(H, S, V / 1.5);
 end;
+
+function Library:GetLighterColor(Color, Amount)
+    local H, S, V = Color3.toHSV(Color);
+    local Alpha = math.clamp(Amount or 0.08, 0, 1);
+    return Color3.fromHSV(H, S, math.clamp(V + ((1 - V) * Alpha), 0, 1));
+end;
+
 Library.AccentColorDark = Library:GetDarkerColor(Library.AccentColor);
 
 function Library:AddToRegistry(Instance, Properties, IsHud)
@@ -2298,11 +2305,17 @@ do
         local MAX_DROPDOWN_ITEMS = 8;
 
         local ListOuter = Library:Create('Frame', {
-            BackgroundColor3 = Color3.new(0, 0, 0);
-            BorderColor3 = Color3.new(0, 0, 0);
+            BackgroundColor3 = Library.Black;
+            BorderColor3 = Library.Black;
+            BorderSizePixel = 1;
             ZIndex = 20;
             Visible = false;
             Parent = ScreenGui;
+        });
+
+        Library:AddToRegistry(ListOuter, {
+            BackgroundColor3 = 'Black';
+            BorderColor3 = 'Black';
         });
 
         local function RecalculateListPosition()
@@ -2319,25 +2332,31 @@ do
         DropdownOuter:GetPropertyChangedSignal('AbsolutePosition'):Connect(RecalculateListPosition);
 
         local ListInner = Library:Create('Frame', {
-            BackgroundColor3 = Library.MainColor;
+            BackgroundColor3 = Library:GetLighterColor(Library.BackgroundColor, 0.07);
             BorderColor3 = Library.OutlineColor;
             BorderMode = Enum.BorderMode.Inset;
-            BorderSizePixel = 0;
-            Size = UDim2.new(1, 0, 1, 0);
+            BorderSizePixel = 1;
+            Position = UDim2.new(0, 1, 0, 1);
+            Size = UDim2.new(1, -2, 1, -2);
             ZIndex = 21;
             Parent = ListOuter;
         });
 
         Library:AddToRegistry(ListInner, {
-            BackgroundColor3 = 'MainColor';
+            BackgroundColor3 = function()
+                return Library:GetLighterColor(Library.BackgroundColor, 0.07);
+            end;
             BorderColor3 = 'OutlineColor';
         });
+
+        Library:AddSubtleGradient(ListInner, 8, 90);
 
         local Scrolling = Library:Create('ScrollingFrame', {
             BackgroundTransparency = 1;
             BorderSizePixel = 0;
             CanvasSize = UDim2.new(0, 0, 0, 0);
-            Size = UDim2.new(1, 0, 1, 0);
+            Position = UDim2.new(0, 2, 0, 2);
+            Size = UDim2.new(1, -4, 1, -4);
             ZIndex = 21;
             Parent = ListInner;
 
@@ -2410,19 +2429,23 @@ do
                 Count = Count + 1;
 
                 local Button = Library:Create('Frame', {
-                    BackgroundColor3 = Library.MainColor;
+                    BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.035);
                     BorderColor3 = Library.OutlineColor;
                     BorderMode = Enum.BorderMode.Middle;
-                    Size = UDim2.new(1, -1, 0, 20);
+                    Size = UDim2.new(1, 0, 0, 20);
                     ZIndex = 23;
                     Active = true,
                     Parent = Scrolling;
                 });
 
                 Library:AddToRegistry(Button, {
-                    BackgroundColor3 = 'MainColor';
+                    BackgroundColor3 = function()
+                        return Library:GetLighterColor(Library.MainColor, 0.035);
+                    end;
                     BorderColor3 = 'OutlineColor';
                 });
+
+                Library:AddSubtleGradient(Button, 7, 90);
 
                 local ButtonLabel = Library:CreateLabel({
                     Active = false;
@@ -2435,10 +2458,17 @@ do
                     Parent = Button;
                 });
 
-                Library:OnHighlight(Button, Button,
-                    { BorderColor3 = 'AccentColor', ZIndex = 24 },
-                    { BorderColor3 = 'OutlineColor', ZIndex = 23 }
-                );
+                Button.MouseEnter:Connect(function()
+                    Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.09);
+                    Button.BorderColor3 = Library.AccentColor;
+                    Button.ZIndex = 24;
+                end);
+
+                Button.MouseLeave:Connect(function()
+                    Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.035);
+                    Button.BorderColor3 = Library.OutlineColor;
+                    Button.ZIndex = 23;
+                end);
 
                 local Selected;
 
@@ -2457,6 +2487,12 @@ do
 
                     ButtonLabel.TextColor3 = Selected and Library.AccentColor or Library.FontColor;
                     Library.RegistryMap[ButtonLabel].Properties.TextColor3 = Selected and 'AccentColor' or 'FontColor';
+
+                    if Selected then
+                        Button.BackgroundColor3 = Library:GetLighterColor(Library.AccentColorDark, 0.05);
+                    else
+                        Button.BackgroundColor3 = Library:GetLighterColor(Library.MainColor, 0.035);
+                    end;
                 end;
 
                 ButtonLabel.InputBegan:Connect(function(Input)
