@@ -2,10 +2,11 @@
 -- You can suggest changes with a pull request or something
 
 local repo = 'https://raw.githubusercontent.com/itsmigeira-tech/LinoriaLib/main/'
+local CacheBuster = '?v=' .. tostring(os.time())
 
-local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
-local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
-local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua'))()
+local Library = loadstring(game:HttpGet(repo .. 'Library.lua' .. CacheBuster))()
+local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua' .. CacheBuster))()
+local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua' .. CacheBuster))()
 
 local Toggles = Library.Toggles
 local Options = Library.Options
