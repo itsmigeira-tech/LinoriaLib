@@ -445,18 +445,42 @@
 			return tween
 		end 
 
-		function library:config_list_update() 
-			if not config_holder then return end 
-		
+		function library:config_list_update(force)
+			if not config_holder then return {} end
+
 			local list = {}
-		
-			for idx, file in next, listfiles(library.directory .. "/configs") do
-				local name = string.sub(file:gsub(library.directory .. "/configs\\", ""):gsub(library.directory .. "\\configs\\", ""), 1, -5)
-				list[#list + 1] = name
+			local success, files = pcall(listfiles, library.directory .. "/configs")
+
+			if success and type(files) == "table" then
+				for _, file in next, files do
+					local normalized = tostring(file):gsub("\\", "/")
+					local name = normalized:match("([^/]+)%.cfg$")
+
+					if name then
+						list[#list + 1] = name
+					end
+				end
 			end
-			
-			config_holder.refresh_options(list)
-		end 
+
+			table.sort(list)
+
+			local signature = table.concat(list, "\0")
+			if force or signature ~= library._config_list_signature then
+				local selected = flags["config_name_list"]
+				library._config_list_signature = signature
+				config_holder.refresh_options(list)
+
+				if selected and table.find(list, selected) then
+					config_holder.set(selected)
+				elseif #list > 0 then
+					config_holder.set(list[1])
+				else
+					flags["config_name_list"] = nil
+				end
+			end
+
+			return list
+		end
 
 		function library:get_config()
 			local Config = {}
@@ -1491,6 +1515,7 @@
 					})
 
 					config_holder = section:list({flag = "config_name_list"})
+					library:config_list_update(true)
 					section:textbox({flag = "config_name_text_box"})
 					section:button_holder({})
 					section:button({name = "Create", callback = function()
@@ -1512,10 +1537,6 @@
 						library:notification({text = "Saved Config: " .. flags["config_name_list"], time = 3})
 					end})
 					section:button_holder({})
-					section:button({name = "Refresh Configs", callback = function()
-						library:config_list_update()
-					end})
-					section:button_holder({})
 					section:button({name = "Unload Config", callback = function()
 						library:load_config(library.old_config)
 					end})
@@ -1532,6 +1553,20 @@
 
 						blur:Destroy()
 					end})
+
+					if not window._config_watcher_started then
+						window._config_watcher_started = true
+
+						task.spawn(function()
+							while window._config_watcher_started do
+								pcall(function()
+									library:config_list_update()
+								end)
+
+								task.wait(0.75)
+							end
+						end)
+					end
 
 					return configuration
 				end
@@ -4685,7 +4720,7 @@
 					Size = dim2(1, -27, 1, cfg.scale),
 					BorderSizePixel = 0,
 					BackgroundColor3 = themes.preset.outline
-				}) library:apply_theme(main_holder, "outline", "BackgroundColor3") 
+				}) library:apply_theme(list, "outline", "BackgroundColor3") 
 				
 				local inline = library:create("Frame", {
 					Parent = list,
@@ -4806,7 +4841,10 @@
 
 				for _, v in next, cfg.option_instances do 
 					v:Destroy() 
-				end 
+				end
+
+				cfg.option_instances = {}
+				cfg.current_instance = nil
 
 				for _, option in next, options do 
 					local button = cfg.render_option(option) 
