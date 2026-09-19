@@ -46,6 +46,9 @@ local Library = {
     Black = Color3.fromRGB(5, 5, 7);
     Font = Enum.Font.Code,
 
+    UseUICorners = true;
+    CornerRadius = UDim.new(0, 4);
+
     OpenedFrames = {};
     DependencyBoxes = {};
 
@@ -134,6 +137,24 @@ function Library:Create(Class, Properties)
 
     for Property, Value in next, Properties do
         _Instance[Property] = Value;
+    end;
+
+    local IsCornerTarget = _Instance:IsA('Frame')
+        or _Instance:IsA('GuiButton')
+        or _Instance:IsA('TextBox')
+        or _Instance:IsA('ImageLabel')
+        or _Instance:IsA('ScrollingFrame');
+
+    if Library.UseUICorners and IsCornerTarget and not _Instance:FindFirstChildOfClass('UICorner') then
+        local Height = _Instance.Size.Y;
+        local IsThinDecoration = Height.Scale == 0 and Height.Offset > 0 and Height.Offset < 6;
+
+        if not IsThinDecoration then
+            Library:Create('UICorner', {
+                CornerRadius = Library.CornerRadius;
+                Parent = _Instance;
+            });
+        end;
     end;
 
     return _Instance;

@@ -23,3 +23,14 @@ Used in the Linoria script hub: https://kyaru.cloud
 - Wally: Cleaning up verbose code, extending library functionality.
 - Stefanuk: Extending library functionality.
 - matas3535: Creator of Splix.
+
+## UI Corners
+
+LinoriaLib applies Roblox `UICorner` instances to standard UI surfaces by default.
+
+```lua
+Library.UseUICorners = true
+Library.CornerRadius = UDim.new(0, 4)
+```
+
+Set `Library.UseUICorners = false` before creating the UI to restore square corners, or change `Library.CornerRadius` to customize the radius. Very thin decorative frames are intentionally excluded so dividers and accent lines remain crisp.
